@@ -1,0 +1,25 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password": "123456",
+      "bio": "I love writing stories.",
+      "profilePic": "/api/placeholder/100/100",
+      "followers": 0,
+      "following": 0
+    },
+    {
+      "id": 1747559632349,
+      "username": "zanssxploit@gmail.com",
+      "password": "$aM$8K44n8yaH8Y",
+      "bio": "meme",
+      "profilePic": "/api/placeholder/100/100",
+      "followers": 0,
+      "following": 0
+    }
+  ],
+  "stories": [],
+  "comments": [],
+  "likes": []
+}
