@@ -1,27 +1,583 @@
-{
-  "name": "ceritaku-platform",
-  "version": "1.0.0",
-  "description": "Platform berbagi cerita seperti Wattpad",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
-  },
-  "keywords": [
-    "story",
-    "wattpad",
-    "sharing",
-    "platform"
-  ],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "axios": "^1.4.0",
-    "express": "^4.18.2",
-    "multer": "^1.4.5-lts.1",
-    "uuid": "^9.0.0"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.22"
-  }
-}
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CeritaKu - Platform Berbagi Cerita</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .navbar {
+            background-color: #7c4dff;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .search-bar {
+            flex-grow: 1;
+            max-width: 500px;
+            margin: 0 20px;
+        }
+        
+        .search-bar input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 1rem;
+        }
+        
+        .button {
+            background-color: #7c4dff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: inline-block;
+            text-decoration: none;
+        }
+        
+        .button:hover {
+            background-color: #6a3aeb;
+        }
+        
+        .story-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        
+        .story-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .story-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .story-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .story-content {
+            padding: 15px;
+        }
+        
+        .story-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .story-author {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .author-image {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+        
+        .genre-tag {
+            background-color: #f2eaff;
+            color: #7c4dff;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            display: inline-block;
+        }
+        
+        .story-preview {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .upload-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-group input[type="text"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            height: 200px;
+            resize: vertical;
+        }
+        
+        .form-group select {
+            height: 40px;
+        }
+        
+        .image-preview {
+            width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .profile-preview {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .file-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .file-input-wrapper input[type="text"] {
+            flex-grow: 1;
+        }
+        
+        .or-text {
+            margin: 10px 0;
+            text-align: center;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .story-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+            
+            .search-bar {
+                margin: 15px 0;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">CeritaKu</a>
+        <div class="nav-links">
+            <a href="/">Beranda</a>
+            <a href="#" id="openUploadModal">Tulis Cerita</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="header">
+            <h1>Jelajahi Cerita</h1>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Cari cerita...">
+            </div>
+            <button class="button" id="openUploadModalBtn">Tulis Cerita</button>
+        </div>
+        
+        <div class="story-grid" id="storyGrid">
+            <!-- Stories will be loaded here dynamically -->
+        </div>
+    </div>
+    
+    <div class="upload-modal" id="uploadModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Tulis Cerita Baru</h2>
+                <button class="close-button" id="closeModal">&times;</button>
+            </div>
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label for="storyTitle">Judul Cerita</label>
+                    <input type="text" id="storyTitle" name="title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="storyImage">Gambar Cerita</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="storyImageFile" name="imageFile" accept="image/*">
+                    </div>
+                    <div class="or-text">atau</div>
+                    <input type="text" id="storyImageUrl" name="imageUrl" placeholder="URL Gambar">
+                    <img id="storyImagePreview" class="image-preview">
+                </div>
+                
+                <div class="form-group">
+                    <label for="storyGenre">Genre</label>
+                    <select id="storyGenre" name="genre" required>
+                        <option value="">Pilih Genre</option>
+                        <option value="Romansa">Romansa</option>
+                        <option value="Fantasi">Fantasi</option>
+                        <option value="Misteri">Misteri</option>
+                        <option value="Horor">Horor</option>
+                        <option value="Petualangan">Petualangan</option>
+                        <option value="Fiksi Ilmiah">Fiksi Ilmiah</option>
+                        <option value="Humor">Humor</option>
+                        <option value="Thriller">Thriller</option>
+                        <option value="Sejarah">Sejarah</option>
+                        <option value="Puisi">Puisi</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="storyContent">Isi Cerita</label>
+                    <textarea id="storyContent" name="content" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="authorName">Nama Penulis</label>
+                    <input type="text" id="authorName" name="author" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="authorProfile">Foto Profil</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="authorProfileFile" name="profileFile" accept="image/*">
+                    </div>
+                    <div class="or-text">atau</div>
+                    <input type="text" id="authorProfileUrl" name="profileUrl" placeholder="URL Foto Profil">
+                    <img id="authorProfilePreview" class="profile-preview">
+                </div>
+                
+                <button type="submit" class="button" style="width: 100%;">Publikasikan Cerita</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load stories when page loads
+            loadStories();
+            
+            // Modal controls
+            const uploadModal = document.getElementById('uploadModal');
+            const openModalBtn = document.getElementById('openUploadModalBtn');
+            const openModalLink = document.getElementById('openUploadModal');
+            const closeModal = document.getElementById('closeModal');
+            
+            function openModal() {
+                uploadModal.style.display = 'flex';
+            }
+            
+            function closeModalFunc() {
+                uploadModal.style.display = 'none';
+                document.getElementById('uploadForm').reset();
+                document.getElementById('storyImagePreview').style.display = 'none';
+                document.getElementById('authorProfilePreview').style.display = 'none';
+            }
+            
+            openModalBtn.addEventListener('click', openModal);
+            openModalLink.addEventListener('click', openModal);
+            closeModal.addEventListener('click', closeModalFunc);
+            
+            window.addEventListener('click', function(event) {
+                if (event.target === uploadModal) {
+                    closeModalFunc();
+                }
+            });
+            
+            // Image previews
+            const storyImageFile = document.getElementById('storyImageFile');
+            const storyImageUrl = document.getElementById('storyImageUrl');
+            const storyImagePreview = document.getElementById('storyImagePreview');
+            
+            const authorProfileFile = document.getElementById('authorProfileFile');
+            const authorProfileUrl = document.getElementById('authorProfileUrl');
+            const authorProfilePreview = document.getElementById('authorProfilePreview');
+            
+            storyImageFile.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        storyImagePreview.src = e.target.result;
+                        storyImagePreview.style.display = 'block';
+                        storyImageUrl.value = '';
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+            
+            storyImageUrl.addEventListener('input', function() {
+                if (this.value) {
+                    storyImagePreview.src = this.value;
+                    storyImagePreview.style.display = 'block';
+                    storyImageFile.value = '';
+                } else {
+                    storyImagePreview.style.display = 'none';
+                }
+            });
+            
+            authorProfileFile.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        authorProfilePreview.src = e.target.result;
+                        authorProfilePreview.style.display = 'block';
+                        authorProfileUrl.value = '';
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+            
+            authorProfileUrl.addEventListener('input', function() {
+                if (this.value) {
+                    authorProfilePreview.src = this.value;
+                    authorProfilePreview.style.display = 'block';
+                    authorProfileFile.value = '';
+                } else {
+                    authorProfilePreview.style.display = 'none';
+                }
+            });
+            
+            // Form submission
+            const uploadForm = document.getElementById('uploadForm');
+            
+            uploadForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData();
+                
+                // Add text data
+                formData.append('title', document.getElementById('storyTitle').value);
+                formData.append('genre', document.getElementById('storyGenre').value);
+                formData.append('content', document.getElementById('storyContent').value);
+                formData.append('author', document.getElementById('authorName').value);
+                
+                // Add image file or URL
+                if (storyImageFile.files.length > 0) {
+                    formData.append('imageFile', storyImageFile.files[0]);
+                } else if (storyImageUrl.value) {
+                    formData.append('imageUrl', storyImageUrl.value);
+                }
+                
+                // Add profile file or URL
+                if (authorProfileFile.files.length > 0) {
+                    formData.append('profileFile', authorProfileFile.files[0]);
+                } else if (authorProfileUrl.value) {
+                    formData.append('profileUrl', authorProfileUrl.value);
+                }
+                
+                try {
+                    const response = await fetch('/api/stories', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (response.ok) {
+                        alert('Cerita berhasil dipublikasikan!');
+                        closeModalFunc();
+                        loadStories(); // Reload stories to show the new one
+                    } else {
+                        const error = await response.json();
+                        alert('Error: ' + error.message);
+                    }
+                } catch (error) {
+                    alert('Terjadi kesalahan. Silakan coba lagi.');
+                    console.error('Error:', error);
+                }
+            });
+            
+            // Search functionality
+            const searchInput = document.getElementById('searchInput');
+            
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                filterStories(searchTerm);
+            });
+            
+            function filterStories(searchTerm) {
+                const storyCards = document.querySelectorAll('.story-card');
+                
+                storyCards.forEach(card => {
+                    const title = card.querySelector('.story-title').textContent.toLowerCase();
+                    const author = card.querySelector('.author-name').textContent.toLowerCase();
+                    const genre = card.querySelector('.genre-tag').textContent.toLowerCase();
+                    const content = card.querySelector('.story-preview').textContent.toLowerCase();
+                    
+                    if (title.includes(searchTerm) || 
+                        author.includes(searchTerm) || 
+                        genre.includes(searchTerm) || 
+                        content.includes(searchTerm)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+        });
+        
+        // Load stories from server
+        async function loadStories() {
+            try {
+                const response = await fetch('/api/stories');
+                const stories = await response.json();
+                
+                const storyGrid = document.getElementById('storyGrid');
+                storyGrid.innerHTML = '';
+                
+                if (stories.length === 0) {
+                    storyGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 50px 0;">Belum ada cerita. Jadilah yang pertama menulis cerita!</p>';
+                    return;
+                }
+                
+                stories.forEach(story => {
+                    const storyElement =             createStoryElement(story);
+                    storyGrid.appendChild(storyElement);
+                });
+            } catch (error) {
+                console.error('Error loading stories:', error);
+                document.getElementById('storyGrid').innerHTML = 
+                    '<p style="grid-column: 1/-1; text-align: center; padding: 50px 0; color: red;">Gagal memuat cerita. Silakan refresh halaman.</p>';
+            }
+        }
+        
+        function createStoryElement(story) {
+            const storyCard = document.createElement('div');
+            storyCard.className = 'story-card';
+            storyCard.dataset.id = story.id;
+            
+            // Use a default image if none provided
+            const imageUrl = story.imageUrl || '/uploads/default-cover.jpg';
+            const profileUrl = story.profileUrl || '/uploads/default-profile.jpg';
+            
+            storyCard.innerHTML = `
+                <img src="${imageUrl}" alt="${story.title}" class="story-image">
+                <div class="story-content">
+                    <h3 class="story-title">${story.title}</h3>
+                    <div class="story-author">
+                        <img src="${profileUrl}" alt="${story.author}" class="author-image">
+                        <span class="author-name">${story.author}</span>
+                    </div>
+                    <span class="genre-tag">${story.genre}</span>
+                    <p class="story-preview">${story.content.substring(0, 150)}${story.content.length > 150 ? '...' : ''}</p>
+                </div>
+            `;
+            
+            storyCard.addEventListener('click', function() {
+                window.location.href = `/story.html?id=${story.id}`;
+            });
+            
+            return storyCard;
+        }
+    </script>
+</body>
+</html>
