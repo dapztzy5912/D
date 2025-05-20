@@ -4,123 +4,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CeritaKu - Platform Berbagi Cerita</title>
+    <title>CeritaKu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-dark: #121212;
+            --bg-surface: #1E1E1E;
+            --text-primary: #E0E0E0;
+            --text-secondary: #A0A0A0;
+            --accent-primary: #00BCD4;
+            --accent-secondary: #FF9800; 
+            --border-color: #333333;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
         
         body {
-            background-color: #f5f5f5;
-            color: #333;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
         }
         
         .navbar {
-            background-color: #7c4dff;
-            color: white;
-            padding: 15px 30px;
+            background-color: var(--bg-surface);
+            color: var(--text-primary);
+            padding: 15px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
         
         .logo {
             font-size: 1.8rem;
-            font-weight: bold;
+            font-weight: 700;
             text-decoration: none;
-            color: white;
+            color: var(--accent-primary);
         }
+        .logo i { margin-right: 8px; }
         
-        .nav-links {
-            display: flex;
-            gap: 20px;
-        }
-        
+        .nav-links { display: flex; gap: 25px; }
         .nav-links a {
-            color: white;
+            color: var(--text-primary);
             text-decoration: none;
             font-size: 1rem;
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
         }
+        .nav-links a:hover, .nav-links a.active {
+            background-color: var(--accent-primary);
+            color: var(--bg-dark);
+        }
+        .nav-links a i { margin-right: 6px; }
         
         .container {
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 30px 20px;
         }
         
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: var(--bg-surface);
+            border-radius: 8px;
+        }
+        .header h1 {
+            font-size: 2.2rem;
+            color: var(--accent-primary);
         }
         
         .search-bar {
             flex-grow: 1;
-            max-width: 500px;
-            margin: 0 20px;
+            max-width: 600px;
+            margin: 0 30px;
+            position: relative;
         }
-        
         .search-bar input {
             width: 100%;
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-dark);
+            border-radius: 25px;
             font-size: 1rem;
+            color: var(--text-primary);
+        }
+        .search-bar input::placeholder { color: var(--text-secondary); }
+        .search-bar .fa-search {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
         }
         
         .button {
-            background-color: #7c4dff;
-            color: white;
+            background-color: var(--accent-primary);
+            color: var(--bg-dark);
+            font-weight: 600;
             border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
+            padding: 12px 25px;
+            border-radius: 25px;
             cursor: pointer;
             font-size: 1rem;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
             text-decoration: none;
+            transition: background-color 0.3s, transform 0.2s;
         }
-        
+        .button i { margin-right: 8px; }
         .button:hover {
-            background-color: #6a3aeb;
+            background-color: #00acc1; /* Darker cyan */
+            transform: translateY(-2px);
         }
         
         .story-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
         }
         
         .story-card {
-            background-color: white;
-            border-radius: 10px;
+            background-color: var(--bg-surface);
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
         }
-        
         .story-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0, 188, 212, 0.3);
         }
         
         .story-image {
             width: 100%;
-            height: 200px;
+            height: 220px;
             object-fit: cover;
         }
         
-        .story-content {
-            padding: 15px;
+        .story-card-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
         
         .story-title {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
+            font-weight: 600;
             margin-bottom: 10px;
+            color: var(--accent-primary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -129,35 +178,53 @@
         .story-author {
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
         }
-        
         .author-image {
             width: 30px;
             height: 30px;
             border-radius: 50%;
             object-fit: cover;
             margin-right: 10px;
+            border: 2px solid var(--accent-primary);
         }
         
         .genre-tag {
-            background-color: #f2eaff;
-            color: #7c4dff;
-            padding: 5px 10px;
+            background-color: var(--accent-secondary);
+            color: var(--bg-dark);
+            padding: 4px 12px;
             border-radius: 15px;
             font-size: 0.8rem;
+            font-weight: 500;
             display: inline-block;
+            margin-bottom: 12px;
         }
         
         .story-preview {
-            font-size: 0.9rem;
-            color: #666;
-            margin-top: 10px;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            flex-grow: 1;
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
+
+        .story-stats {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            border-top: 1px solid var(--border-color);
+            padding-top: 12px;
+        }
+        .story-stats span { display: inline-flex; align-items: center; }
+        .story-stats i { margin-right: 6px; color: var(--accent-primary); }
         
         .upload-modal {
             display: none;
@@ -166,144 +233,136 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 100;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 1001;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
         
         .modal-content {
-            background-color: white;
-            border-radius: 10px;
-            padding: 30px;
+            background-color: var(--bg-surface);
+            border-radius: 12px;
+            padding: 30px 40px;
             width: 90%;
-            max-width: 600px;
+            max-width: 700px;
             max-height: 90vh;
             overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        
+        .modal-content::-webkit-scrollbar { width: 8px; }
+        .modal-content::-webkit-scrollbar-thumb { background-color: var(--accent-primary); border-radius: 4px;}
+
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
         }
+        .modal-header h2 { color: var(--accent-primary); font-size: 1.8rem;}
         
         .close-button {
             background: none;
             border: none;
-            font-size: 1.5rem;
+            font-size: 2rem;
             cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.3s;
         }
+        .close-button:hover { color: var(--accent-primary); }
         
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
+        .form-group { margin-bottom: 25px; }
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-weight: 500;
+            color: var(--text-primary);
         }
         
         .form-group input[type="text"],
+        .form-group input[type="file"],
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-dark);
+            border-radius: 8px;
             font-size: 1rem;
+            color: var(--text-primary);
         }
+        .form-group input[type="file"] { padding: 8px; }
+        .form-group textarea { min-height: 150px; resize: vertical; }
+        .form-group select { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A0A0A0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 15px center; background-size: 1em;}
         
-        .form-group textarea {
-            height: 200px;
-            resize: vertical;
-        }
-        
-        .form-group select {
-            height: 40px;
-        }
-        
-        .image-preview {
+        .image-preview, .profile-preview {
             width: 100%;
-            max-height: 200px;
+            max-height: 250px;
             object-fit: contain;
-            margin-top: 10px;
-            display: none;
+            margin-top: 15px;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+            background-color: var(--bg-dark);
         }
-        
-        .profile-preview {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-top: 10px;
-            display: none;
-        }
-        
-        .file-input-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .file-input-wrapper input[type="text"] {
-            flex-grow: 1;
-        }
-        
-        .or-text {
-            margin: 10px 0;
+        .profile-preview { width: 100px; height: 100px; border-radius: 50%; object-fit: cover;}
+        .or-text { margin: 12px 0; text-align: center; color: var(--text-secondary); font-style: italic;}
+
+        .loading-message, .empty-message, .error-message {
+            grid-column: 1 / -1;
             text-align: center;
-            color: #666;
+            padding: 60px 20px;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            background-color: var(--bg-surface);
+            border-radius: 8px;
         }
+        .error-message { color: #ff6b6b; }
+        .loading-message i { font-size: 2rem; display: block; margin-bottom: 15px; color: var(--accent-primary); animation: spin 1.5s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         @media (max-width: 768px) {
-            .story-grid {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            }
-            
-            .header {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 15px;
-            }
-            
-            .search-bar {
-                margin: 15px 0;
-                max-width: 100%;
-            }
+            .navbar { padding: 15px 20px; }
+            .header { flex-direction: column; align-items: stretch; gap: 20px; }
+            .search-bar { margin: 0; max-width: 100%; }
+            .story-grid { grid-template-columns: 1fr; }
+            .modal-content { padding: 20px; }
         }
     </style>
 </head>
 <body>
     <nav class="navbar">
-        <a href="/" class="logo">CeritaKu</a>
+        <a href="/" class="logo"><i class="fas fa-book-open"></i>CeritaKu</a>
         <div class="nav-links">
-            <a href="/">Beranda</a>
-            <a href="#" id="openUploadModal">Tulis Cerita</a>
+            <a href="/" class="active"><i class="fas fa-home"></i>Beranda</a>
+            <a href="#" id="openUploadModalLink"><i class="fas fa-feather-alt"></i>Tulis Cerita</a>
         </div>
     </nav>
     
     <div class="container">
         <div class="header">
-            <h1>Jelajahi Cerita</h1>
+            <h1><i class="fas fa-compass"></i>Jelajahi Dunia Cerita</h1>
             <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Cari cerita...">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Cari judul, penulis, genre...">
             </div>
-            <button class="button" id="openUploadModalBtn">Tulis Cerita</button>
+            <button class="button" id="openUploadModalBtn"><i class="fas fa-plus-circle"></i>Buat Cerita Baru</button>
         </div>
         
         <div class="story-grid" id="storyGrid">
-            <!-- Stories will be loaded here dynamically -->
+            <div class="loading-message" id="loadingIndicator">
+                <i class="fas fa-spinner"></i>Memuat cerita...
+            </div>
         </div>
     </div>
     
     <div class="upload-modal" id="uploadModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Tulis Cerita Baru</h2>
-                <button class="close-button" id="closeModal">&times;</button>
+                <h2><i class="fas fa-magic"></i>Tulis Karya Barumu</h2>
+                <button class="close-button" id="closeModal">×</button>
             </div>
             <form id="uploadForm">
                 <div class="form-group">
@@ -312,13 +371,11 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="storyImage">Gambar Cerita</label>
-                    <div class="file-input-wrapper">
-                        <input type="file" id="storyImageFile" name="imageFile" accept="image/*">
-                    </div>
-                    <div class="or-text">atau</div>
-                    <input type="text" id="storyImageUrl" name="imageUrl" placeholder="URL Gambar">
-                    <img id="storyImagePreview" class="image-preview">
+                    <label for="coverImageFile">Gambar Sampul Cerita</label>
+                    <input type="file" id="coverImageFile" name="coverImageFile" accept="image/*">
+                    <div class="or-text">atau tempel URL gambar</div>
+                    <input type="text" id="coverImageUrl" name="coverImageUrl" placeholder="https://example.com/image.jpg">
+                    <img id="coverImagePreview" class="image-preview" src="/uploads/default-cover.jpg" alt="Preview Sampul">
                 </div>
                 
                 <div class="form-group">
@@ -335,249 +392,242 @@
                         <option value="Thriller">Thriller</option>
                         <option value="Sejarah">Sejarah</option>
                         <option value="Puisi">Puisi</option>
+                        <option value="Slice of Life">Slice of Life</option>
+                        <option value="Aksi">Aksi</option>
+                        <option value="Drama">Drama</option>
+                        <option value="Sains Fiksi">Sains Fiksi</option>
+                        <option value="Fanfiction">Fanfiction</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="storyTags">Tags (pisahkan dengan koma, contoh: sihir, cinta segitiga, petualangan)</label>
+                    <input type="text" id="storyTags" name="tags" placeholder="sihir, cinta segitiga, petualangan">
+                </div>
+
+                 <div class="form-group">
+                    <label for="storyStatus">Status Cerita</label>
+                    <select id="storyStatus" name="status">
+                        <option value="Ongoing">Ongoing (Berkelanjutan)</option>
+                        <option value="Completed">Completed (Selesai)</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
-                    <label for="storyContent">Isi Cerita</label>
-                    <textarea id="storyContent" name="content" required></textarea>
+                    <label for="firstChapterTitle">Judul Bab Pertama (Opsional)</label>
+                    <input type="text" id="firstChapterTitle" name="firstChapterTitle" placeholder="Contoh: Prolog, Pertemuan Awal">
+                </div>
+
+                <div class="form-group">
+                    <label for="firstChapterContent">Isi Bab Pertama</label>
+                    <textarea id="firstChapterContent" name="firstChapterContent" required placeholder="Mulai tulis mahakaryamu di sini..."></textarea>
                 </div>
                 
                 <div class="form-group">
                     <label for="authorName">Nama Penulis</label>
-                    <input type="text" id="authorName" name="author" required>
+                    <input type="text" id="authorName" name="authorName" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="authorProfile">Foto Profil</label>
-                    <div class="file-input-wrapper">
-                        <input type="file" id="authorProfileFile" name="profileFile" accept="image/*">
-                    </div>
-                    <div class="or-text">atau</div>
-                    <input type="text" id="authorProfileUrl" name="profileUrl" placeholder="URL Foto Profil">
-                    <img id="authorProfilePreview" class="profile-preview">
+                    <label for="authorProfileFile">Foto Profil Penulis</label>
+                    <input type="file" id="authorProfileFile" name="authorProfileFile" accept="image/*">
+                    <div class="or-text">atau tempel URL foto profil</div>
+                    <input type="text" id="authorProfileUrl" name="authorProfileUrl" placeholder="https://example.com/profile.jpg">
+                    <img id="authorProfilePreview" class="profile-preview" src="/uploads/default-profile.jpg" alt="Preview Profil">
                 </div>
                 
-                <button type="submit" class="button" style="width: 100%;">Publikasikan Cerita</button>
+                <button type="submit" class="button" style="width: 100%; font-size: 1.1rem; padding: 15px;">
+                    <i class="fas fa-paper-plane"></i>Publikasikan Cerita
+                </button>
             </form>
         </div>
     </div>
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Load stories when page loads
-            loadStories();
-            
-            // Modal controls
+            const storyGrid = document.getElementById('storyGrid');
+            const loadingIndicator = document.getElementById('loadingIndicator');
             const uploadModal = document.getElementById('uploadModal');
             const openModalBtn = document.getElementById('openUploadModalBtn');
-            const openModalLink = document.getElementById('openUploadModal');
-            const closeModal = document.getElementById('closeModal');
-            
-            function openModal() {
-                uploadModal.style.display = 'flex';
+            const openModalLink = document.getElementById('openUploadModalLink');
+            const closeModalBtn = document.getElementById('closeModal');
+            const uploadForm = document.getElementById('uploadForm');
+            const searchInput = document.getElementById('searchInput');
+
+            let allStories = []; 
+
+            function displayMessage(type, message) {
+                storyGrid.innerHTML = `<div class="${type}-message">${message}</div>`;
+            }
+
+            async function loadStories() {
+                loadingIndicator.style.display = 'block';
+                storyGrid.innerHTML = ''; 
+                try {
+                    const response = await fetch('/api/stories');
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    allStories = await response.json();
+                    
+                    loadingIndicator.style.display = 'none';
+                    if (allStories.length === 0) {
+                        displayMessage('empty', '<i class="fas fa-ghost" style="font-size: 2rem; display: block; margin-bottom: 15px;"></i>Belum ada cerita. Jadilah yang pertama menulis!');
+                        return;
+                    }
+                    renderStories(allStories);
+                } catch (error) {
+                    console.error('Error loading stories:', error);
+                    loadingIndicator.style.display = 'none';
+                    displayMessage('error', '<i class="fas fa-exclamation-triangle" style="font-size: 2rem; display: block; margin-bottom: 15px;"></i>Gagal memuat cerita. Coba muat ulang halaman.');
+                }
+            }
+
+            function renderStories(storiesToRender) {
+                storyGrid.innerHTML = '';
+                 if (storiesToRender.length === 0) {
+                    storyGrid.innerHTML = `<div class="empty-message">Tidak ada cerita yang cocok dengan pencarianmu.</div>`;
+                    return;
+                }
+                storiesToRender.forEach(story => {
+                    const storyElement = createStoryElement(story);
+                    storyGrid.appendChild(storyElement);
+                });
             }
             
+            function createStoryElement(story) {
+                const storyCard = document.createElement('div');
+                storyCard.className = 'story-card';
+                storyCard.dataset.slug = story.slug;
+                
+                const coverImg = story.coverImageUrl || '/uploads/default-cover.jpg';
+                const authorImg = story.authorProfileUrl || '/uploads/default-profile.jpg';
+                const firstChapterContentPreview = story.chapters && story.chapters.length > 0 ? story.chapters[0].content : "Belum ada konten.";
+
+
+                storyCard.innerHTML = `
+                    <img src="${coverImg}" alt="${story.title}" class="story-image">
+                    <div class="story-card-content">
+                        <h3 class="story-title">${story.title}</h3>
+                        <div class="story-author">
+                            <img src="${authorImg}" alt="${story.authorName}" class="author-image">
+                            <span>${story.authorName}</span>
+                        </div>
+                        <span class="genre-tag">${story.genre}</span>
+                        <p class="story-preview">${(story.chapters && story.chapters.length > 0 && story.chapters[0].content) ? story.chapters[0].content.substring(0, 100) + '...' : 'Deskripsi cerita belum tersedia.'}</p>
+                        <div class="story-stats">
+                            <span><i class="fas fa-eye"></i> ${story.views || 0}</span>
+                            <span><i class="fas fa-heart"></i> ${story.likes || 0}</span>
+                            <span><i class="fas fa-book-reader"></i> ${story.chapters ? story.chapters.length : 0} Bab</span>
+                        </div>
+                    </div>
+                `;
+                
+                storyCard.addEventListener('click', function() {
+                    window.location.href = `/story.html?slug=${story.slug}`;
+                });
+                return storyCard;
+            }
+            function openModal() { uploadModal.style.display = 'flex'; }
             function closeModalFunc() {
                 uploadModal.style.display = 'none';
-                document.getElementById('uploadForm').reset();
-                document.getElementById('storyImagePreview').style.display = 'none';
-                document.getElementById('authorProfilePreview').style.display = 'none';
+                uploadForm.reset();
+                document.getElementById('coverImagePreview').src = '/uploads/default-cover.jpg';
+                document.getElementById('authorProfilePreview').src = '/uploads/default-profile.jpg';
             }
-            
             openModalBtn.addEventListener('click', openModal);
             openModalLink.addEventListener('click', openModal);
-            closeModal.addEventListener('click', closeModalFunc);
-            
-            window.addEventListener('click', function(event) {
-                if (event.target === uploadModal) {
-                    closeModalFunc();
-                }
-            });
-            
-            // Image previews
-            const storyImageFile = document.getElementById('storyImageFile');
-            const storyImageUrl = document.getElementById('storyImageUrl');
-            const storyImagePreview = document.getElementById('storyImagePreview');
-            
-            const authorProfileFile = document.getElementById('authorProfileFile');
-            const authorProfileUrl = document.getElementById('authorProfileUrl');
-            const authorProfilePreview = document.getElementById('authorProfilePreview');
-            
-            storyImageFile.addEventListener('change', function() {
-                if (this.files && this.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        storyImagePreview.src = e.target.result;
-                        storyImagePreview.style.display = 'block';
-                        storyImageUrl.value = '';
+            closeModalBtn.addEventListener('click', closeModalFunc);
+            window.addEventListener('click', (event) => event.target === uploadModal && closeModalFunc());
+            function setupImagePreview(fileInputId, urlInputId, previewImgId, defaultImg) {
+                const fileInput = document.getElementById(fileInputId);
+                const urlInput = document.getElementById(urlInputId);
+                const previewImg = document.getElementById(previewImgId);
+
+                fileInput.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            previewImg.src = e.target.result;
+                            urlInput.value = ''; 
+                        }
+                        reader.readAsDataURL(this.files[0]);
                     }
-                    reader.readAsDataURL(this.files[0]);
-                }
-            });
-            
-            storyImageUrl.addEventListener('input', function() {
-                if (this.value) {
-                    storyImagePreview.src = this.value;
-                    storyImagePreview.style.display = 'block';
-                    storyImageFile.value = '';
-                } else {
-                    storyImagePreview.style.display = 'none';
-                }
-            });
-            
-            authorProfileFile.addEventListener('change', function() {
-                if (this.files && this.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        authorProfilePreview.src = e.target.result;
-                        authorProfilePreview.style.display = 'block';
-                        authorProfileUrl.value = '';
+                });
+                urlInput.addEventListener('input', function() {
+                    if (this.value) {
+                        previewImg.src = this.value;
+                        fileInput.value = '';
+                    } else if (!fileInput.files.length) {
+                         previewImg.src = defaultImg;
                     }
-                    reader.readAsDataURL(this.files[0]);
-                }
-            });
-            
-            authorProfileUrl.addEventListener('input', function() {
-                if (this.value) {
-                    authorProfilePreview.src = this.value;
-                    authorProfilePreview.style.display = 'block';
-                    authorProfileFile.value = '';
-                } else {
-                    authorProfilePreview.style.display = 'none';
-                }
-            });
-            
-            // Form submission
-            const uploadForm = document.getElementById('uploadForm');
-            
+                });
+                 previewImg.onerror = function() {
+                    previewImg.src = defaultImg;
+                };
+            }
+            setupImagePreview('coverImageFile', 'coverImageUrl', 'coverImagePreview', '/uploads/default-cover.jpg');
+            setupImagePreview('authorProfileFile', 'authorProfileUrl', 'authorProfilePreview', '/uploads/default-profile.jpg');
             uploadForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
-                
+                const submitButton = uploadForm.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mempublikasikan...';
+
                 const formData = new FormData();
-                
-                // Add text data
                 formData.append('title', document.getElementById('storyTitle').value);
                 formData.append('genre', document.getElementById('storyGenre').value);
-                formData.append('content', document.getElementById('storyContent').value);
-                formData.append('author', document.getElementById('authorName').value);
-                
-                // Add image file or URL
-                if (storyImageFile.files.length > 0) {
-                    formData.append('imageFile', storyImageFile.files[0]);
-                } else if (storyImageUrl.value) {
-                    formData.append('imageUrl', storyImageUrl.value);
+                formData.append('firstChapterTitle', document.getElementById('firstChapterTitle').value);
+                formData.append('firstChapterContent', document.getElementById('firstChapterContent').value);
+                formData.append('authorName', document.getElementById('authorName').value);
+                formData.append('tags', document.getElementById('storyTags').value);
+                formData.append('status', document.getElementById('storyStatus').value);
+
+                if (document.getElementById('coverImageFile').files[0]) {
+                    formData.append('coverImageFile', document.getElementById('coverImageFile').files[0]);
+                } else if (document.getElementById('coverImageUrl').value) {
+                    formData.append('coverImageUrl', document.getElementById('coverImageUrl').value);
                 }
                 
-                // Add profile file or URL
-                if (authorProfileFile.files.length > 0) {
-                    formData.append('profileFile', authorProfileFile.files[0]);
-                } else if (authorProfileUrl.value) {
-                    formData.append('profileUrl', authorProfileUrl.value);
+                if (document.getElementById('authorProfileFile').files[0]) {
+                    formData.append('authorProfileFile', document.getElementById('authorProfileFile').files[0]);
+                } else if (document.getElementById('authorProfileUrl').value) {
+                    formData.append('authorProfileUrl', document.getElementById('authorProfileUrl').value);
                 }
                 
                 try {
-                    const response = await fetch('/api/stories', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    
+                    const response = await fetch('/api/stories', { method: 'POST', body: formData });
                     if (response.ok) {
                         alert('Cerita berhasil dipublikasikan!');
                         closeModalFunc();
-                        loadStories(); // Reload stories to show the new one
+                        loadStories(); 
                     } else {
                         const error = await response.json();
-                        alert('Error: ' + error.message);
+                        alert('Error: ' + (error.message || 'Gagal mempublikasikan cerita.'));
                     }
                 } catch (error) {
-                    alert('Terjadi kesalahan. Silakan coba lagi.');
-                    console.error('Error:', error);
+                    alert('Terjadi kesalahan jaringan. Silakan coba lagi.');
+                    console.error('Error submitting form:', error);
+                } finally {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = '<i class="fas fa-paper-plane"></i> Publikasikan Cerita';
                 }
             });
-            
-            // Search functionality
-            const searchInput = document.getElementById('searchInput');
-            
             searchInput.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                filterStories(searchTerm);
-            });
-            
-            function filterStories(searchTerm) {
-                const storyCards = document.querySelectorAll('.story-card');
-                
-                storyCards.forEach(card => {
-                    const title = card.querySelector('.story-title').textContent.toLowerCase();
-                    const author = card.querySelector('.author-name').textContent.toLowerCase();
-                    const genre = card.querySelector('.genre-tag').textContent.toLowerCase();
-                    const content = card.querySelector('.story-preview').textContent.toLowerCase();
-                    
-                    if (title.includes(searchTerm) || 
-                        author.includes(searchTerm) || 
-                        genre.includes(searchTerm) || 
-                        content.includes(searchTerm)) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            }
-        });
-        
-        // Load stories from server
-        async function loadStories() {
-            try {
-                const response = await fetch('/api/stories');
-                const stories = await response.json();
-                
-                const storyGrid = document.getElementById('storyGrid');
-                storyGrid.innerHTML = '';
-                
-                if (stories.length === 0) {
-                    storyGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 50px 0;">Belum ada cerita. Jadilah yang pertama menulis cerita!</p>';
+                const searchTerm = this.value.toLowerCase().trim();
+                if (!searchTerm) {
+                    renderStories(allStories);
                     return;
                 }
-                
-                stories.forEach(story => {
-                    const storyElement =             createStoryElement(story);
-                    storyGrid.appendChild(storyElement);
-                });
-            } catch (error) {
-                console.error('Error loading stories:', error);
-                document.getElementById('storyGrid').innerHTML = 
-                    '<p style="grid-column: 1/-1; text-align: center; padding: 50px 0; color: red;">Gagal memuat cerita. Silakan refresh halaman.</p>';
-            }
-        }
-        
-        function createStoryElement(story) {
-            const storyCard = document.createElement('div');
-            storyCard.className = 'story-card';
-            storyCard.dataset.id = story.id;
-            
-            // Use a default image if none provided
-            const imageUrl = story.imageUrl || '/uploads/default-cover.jpg';
-            const profileUrl = story.profileUrl || '/uploads/default-profile.jpg';
-            
-            storyCard.innerHTML = `
-                <img src="${imageUrl}" alt="${story.title}" class="story-image">
-                <div class="story-content">
-                    <h3 class="story-title">${story.title}</h3>
-                    <div class="story-author">
-                        <img src="${profileUrl}" alt="${story.author}" class="author-image">
-                        <span class="author-name">${story.author}</span>
-                    </div>
-                    <span class="genre-tag">${story.genre}</span>
-                    <p class="story-preview">${story.content.substring(0, 150)}${story.content.length > 150 ? '...' : ''}</p>
-                </div>
-            `;
-            
-            storyCard.addEventListener('click', function() {
-                window.location.href = `/story.html?id=${story.id}`;
+                const filteredStories = allStories.filter(story => 
+                    story.title.toLowerCase().includes(searchTerm) ||
+                    story.authorName.toLowerCase().includes(searchTerm) ||
+                    story.genre.toLowerCase().includes(searchTerm) ||
+                    (story.tags && story.tags.some(tag => tag.toLowerCase().includes(searchTerm)))
+                );
+                renderStories(filteredStories);
             });
-            
-            return storyCard;
-        }
+
+            loadStories();
+        });
     </script>
 </body>
 </html>
