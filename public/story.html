@@ -1,0 +1,448 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baca Cerita - CeritaKu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .navbar {
+            background-color: #7c4dff;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .story-header {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .story-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .story-meta {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .author-profile {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .author-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        
+        .author-name {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        .genre-tag {
+            background-color: #f2eaff;
+            color: #7c4dff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .story-cover {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .story-content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            line-height: 1.8;
+            font-size: 1.1rem;
+            white-space: pre-wrap;
+        }
+        
+        .story-content p {
+            margin-bottom: 20px;
+        }
+        
+        .comments-section {
+            margin-top: 40px;
+        }
+        
+        .comments-header {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .comment-form {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .comment-form textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 100px;
+            margin-bottom: 15px;
+        }
+        
+        .button {
+            background-color: #7c4dff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: inline-block;
+            text-decoration: none;
+        }
+        
+        .button:hover {
+            background-color: #6a3aeb;
+        }
+        
+        .comment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .comment {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .comment-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .comment-author-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+        
+        .comment-author-name {
+            font-weight: 500;
+        }
+        
+        .comment-text {
+            line-height: 1.6;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2rem;
+            color: #666;
+        }
+        
+        .error {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2rem;
+            color: #e53935;
+        }
+        
+        .back-button {
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        
+        @media (max-width: 768px) {
+            .story-title {
+                font-size: 2rem;
+            }
+            
+            .story-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .story-cover {
+                height: 300px;
+            }
+            
+            .story-content {
+                padding: 20px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">CeritaKu</a>
+        <div class="nav-links">
+            <a href="/">Beranda</a>
+            <a href="/" id="openUploadModal">Tulis Cerita</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <a href="/" class="button back-button">← Kembali ke Beranda</a>
+        
+        <div id="storyContainer" class="loading">
+            Memuat cerita...
+        </div>
+        
+        <div class="comments-section">
+            <h2 class="comments-header">Komentar</h2>
+            <div class="comment-form">
+                <textarea id="commentText" placeholder="Tulis komentar kamu..."></textarea>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <input type="text" id="commentName" placeholder="Nama kamu" style="padding: 10px; border: 1px solid #ddd; border-radius: 20px; flex: 1; margin-right: 15px;">
+                    <button id="submitComment" class="button">Kirim Komentar</button>
+                </div>
+            </div>
+            
+            <div class="comment-list" id="commentList">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get story ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const storyId = urlParams.get('id');
+            
+            if (!storyId) {
+                document.getElementById('storyContainer').innerHTML = `
+                    <div class="error">
+                        <h2>Error: No story ID found</h2>
+                        <p>Please return to the <a href="/">home page</a> and select a story to read.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Load story
+            loadStory(storyId);
+            
+            // Load comments
+            loadComments(storyId);
+            
+            // Comment form submission
+            const submitComment = document.getElementById('submitComment');
+            const commentText = document.getElementById('commentText');
+            const commentName = document.getElementById('commentName');
+            
+            submitComment.addEventListener('click', async function() {
+                if (!commentText.value.trim()) {
+                    alert('Silakan tulis komentar terlebih dahulu.');
+                    return;
+                }
+                
+                if (!commentName.value.trim()) {
+                    alert('Silakan masukkan nama kamu.');
+                    return;
+                }
+                
+                const commentData = {
+                    storyId: storyId,
+                    name: commentName.value.trim(),
+                    text: commentText.value.trim()
+                };
+                
+                try {
+                    const response = await fetch('/api/comments', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(commentData)
+                    });
+                    
+                    if (response.ok) {
+                        commentText.value = '';
+                        commentName.value = '';
+                        loadComments(storyId); // Reload comments
+                    } else {
+                        const error = await response.json();
+                        alert('Error: ' + error.message);
+                    }
+                } catch (error) {
+                    alert('Terjadi kesalahan. Silakan coba lagi.');
+                    console.error('Error:', error);
+                }
+            });
+        });
+        
+        async function loadStory(storyId) {
+            try {
+                const response = await fetch(`/api/stories/${storyId}`);
+                
+                if (!response.ok) {
+                    throw new Error('Story not found');
+                }
+                
+                const story = await response.json();
+                displayStory(story);
+            } catch (error) {
+                console.error('Error loading story:', error);
+                document.getElementById('storyContainer').innerHTML = `
+                    <div class="error">
+                        <h2>Cerita tidak ditemukan</h2>
+                        <p>Silakan kembali ke <a href="/">halaman beranda</a> dan pilih cerita lain.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        function displayStory(story) {
+            // Use default images if not provided
+            const imageUrl = story.imageUrl || '/uploads/default-cover.jpg';
+            const profileUrl = story.profileUrl || '/uploads/default-profile.jpg';
+            
+            const storyHTML = `
+                <div class="story-header">
+                    <h1 class="story-title">${story.title}</h1>
+                    <div class="story-meta">
+                        <div class="author-profile">
+                            <img src="${profileUrl}" alt="${story.author}" class="author-image">
+                            <span class="author-name">${story.author}</span>
+                        </div>
+                        <span class="genre-tag">${story.genre}</span>
+                    </div>
+                </div>
+                
+                <img src="${imageUrl}" alt="${story.title}" class="story-cover">
+                
+                <div class="story-content">
+                    ${formatContent(story.content)}
+                </div>
+            `;
+            
+            document.getElementById('storyContainer').innerHTML = storyHTML;
+            
+            // Update page title
+            document.title = `${story.title} - CeritaKu`;
+        }
+        
+        function formatContent(content) {
+            // Convert newlines to proper HTML paragraphs
+            if (!content) return '';
+            
+            return content.split('\n\n')
+                .filter(para => para.trim() !== '')
+                .map(para => `<p>${para.replace(/\n/g, '<br>')}</p>`)
+                .join('');
+        }
+        
+        async function loadComments(storyId) {
+            try {
+                const response = await fetch(`/api/comments/${storyId}`);
+                const comments = await response.json();
+                
+                const commentList = document.getElementById('commentList');
+                
+                if (comments.length === 0) {
+                    commentList.innerHTML = '<p style="text-align: center; padding: 20px; color: #666;">Belum ada komentar. Jadilah yang pertama berkomentar!</p>';
+                    return;
+                }
+                
+                commentList.innerHTML = '';
+                
+                comments.forEach(comment => {
+                    const commentElement = createCommentElement(comment);
+                    commentList.appendChild(commentElement);
+                });
+            } catch (error) {
+                console.error('Error loading comments:', error);
+                document.getElementById('commentList').innerHTML = 
+                    '<p style="text-align: center; padding: 20px; color: red;">Gagal memuat komentar. Silakan refresh halaman.</p>';
+            }
+        }
+        
+        function createCommentElement(comment) {
+            const commentElement = document.createElement('div');
+            commentElement.className = 'comment';
+            
+            // Use default profile image if none provided
+            const profileUrl = '/uploads/default-comment-profile.jpg';
+            
+            commentElement.innerHTML = `
+                <div class="comment-header">
+                    <img src="${profileUrl}" alt="${comment.name}" class="comment-author-image">
+                    <span class="comment-author-name">${comment.name}</span>
+                </div>
+                <div class="comment-text">${comment.text}</div>
+            `;
+            
+            return commentElement;
+        }
+    </script>
+</body>
+</html>
