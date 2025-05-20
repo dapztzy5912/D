@@ -5,537 +5,467 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Baca Cerita - CeritaKu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --bg-dark: #121212;
+            --bg-surface: #1E1E1E;
+            --text-primary: #E0E0E0;
+            --text-secondary: #A0A0A0;
+            --accent-primary: #00BCD4; /* Cyan */
+            --accent-secondary: #FF9800; /* Orange */
+            --border-color: #333333;
         }
-        
-        body {
-            background-color: #f5f5f5;
-            color: #333;
-        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-primary); line-height: 1.7; }
         
         .navbar {
-            background-color: #7c4dff;
-            color: white;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background-color: var(--bg-surface); color: var(--text-primary); padding: 15px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3); position: sticky; top: 0; z-index: 1000;
         }
-        
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            text-decoration: none;
-            color: white;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 20px;
-        }
-        
+        .logo { font-size: 1.8rem; font-weight: 700; text-decoration: none; color: var(--accent-primary); }
+        .logo i { margin-right: 8px; }
+        .nav-links { display: flex; gap: 25px; }
         .nav-links a {
-            color: white;
-            text-decoration: none;
-            font-size: 1rem;
+            color: var(--text-primary); text-decoration: none; font-size: 1rem;
+            padding: 8px 12px; border-radius: 5px; transition: background-color 0.3s, color 0.3s;
         }
+        .nav-links a:hover, .nav-links a.active { background-color: var(--accent-primary); color: var(--bg-dark); }
+        .nav-links a i { margin-right: 6px; }
         
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .story-header {
-            background-color: white;
-            border-radius: 10px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        }
-        
-        .story-title {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-        }
-        
-        .story-meta {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .author-profile {
-            display: flex;
-            align-items: center;
-            flex: 1;
-        }
-        
-        .author-image {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 15px;
-        }
-        
-        .author-name {
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
-        
-        .genre-tag {
-            background-color: #f2eaff;
-            color: #7c4dff;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-        }
-        
-        .story-cover {
-            width: 100%;
-            height: 400px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 30px;
-        }
-        
-        .story-content {
-            background-color: white;
-            border-radius: 10px;
-            padding: 40px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            line-height: 1.8;
-            font-size: 1.1rem;
-            white-space: pre-wrap;
-        }
-        
-        .story-content p {
-            margin-bottom: 20px;
-        }
-        
-        .comments-section {
-            margin-top: 40px;
-        }
-        
-        .comments-header {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-        }
-        
-        .comment-form {
-            background-color: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        }
-        
-        .comment-form textarea {
-            width: 100%;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            font-size: 1rem;
-            resize: vertical;
-            min-height: 100px;
-            margin-bottom: 15px;
-        }
-
-        .comment-form-row {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .comment-input-group {
-            flex: 1;
-        }
-        
-        .comment-input-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-            color: #555;
-        }
-
-        .profile-upload-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .profile-preview {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            background-color: #eee;
-            border: 1px solid #ddd;
-        }
-        
-        .profile-upload-btn {
-            background-color: #f0f0f0;
-            border: 1px solid #ddd;
-            color: #555;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            cursor: pointer;
-        }
-
-        .profile-upload-btn:hover {
-            background-color: #e0e0e0;
-        }
+        .container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
         
         .button {
-            background-color: #7c4dff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 1rem;
-            display: inline-block;
-            text-decoration: none;
+            background-color: var(--accent-primary); color: var(--bg-dark); font-weight: 600;
+            border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-size: 1rem;
+            display: inline-flex; align-items: center; text-decoration: none; transition: background-color 0.3s, transform 0.2s;
+        }
+        .button i { margin-right: 8px; }
+        .button:hover { background-color: #00acc1; transform: translateY(-2px); }
+        .button-secondary { background-color: var(--accent-secondary); color: var(--bg-dark); }
+        .button-secondary:hover { background-color: #fb8c00; }
+
+        .back-button { margin-bottom: 25px; }
+
+        #storyDetailContainer {
+            background-color: var(--bg-surface);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
         }
         
-        .button:hover {
-            background-color: #6a3aeb;
+        .story-main-title { font-size: 2.8rem; margin-bottom: 15px; color: var(--accent-primary); font-weight: 700;}
+        
+        .story-meta { display: flex; align-items: center; margin-bottom: 25px; gap: 20px; flex-wrap: wrap; }
+        .author-profile { display: flex; align-items: center; }
+        .author-image {
+            width: 50px; height: 50px; border-radius: 50%; object-fit: cover;
+            margin-right: 15px; border: 3px solid var(--accent-primary);
+        }
+        .author-name { font-size: 1.1rem; font-weight: 500; color: var(--text-primary); }
+        .genre-tag {
+            background-color: var(--accent-secondary); color: var(--bg-dark); padding: 6px 15px;
+            border-radius: 20px; font-size: 0.9rem; font-weight: 500;
+        }
+        .story-stats-inline span { display: inline-flex; align-items: center; margin-right: 15px; color: var(--text-secondary); font-size: 0.9rem; }
+        .story-stats-inline i { margin-right: 6px; color: var(--accent-primary); }
+
+        .story-cover-full {
+            width: 100%; max-height: 450px; object-fit: cover;
+            border-radius: 10px; margin-bottom: 30px;
         }
         
-        .comment-list {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+        .chapters-nav { margin-bottom: 30px; padding: 15px; background-color: var(--bg-dark); border-radius: 8px; }
+        .chapters-nav h3 { margin-bottom: 15px; font-size: 1.3rem; color: var(--accent-primary); }
+        .chapter-list { display: flex; flex-wrap: wrap; gap: 10px; }
+        .chapter-link {
+            padding: 8px 15px; background-color: var(--bg-surface); color: var(--text-primary);
+            border: 1px solid var(--border-color); border-radius: 20px; text-decoration: none;
+            font-size: 0.9rem; transition: background-color 0.3s, color 0.3s;
+        }
+        .chapter-link:hover, .chapter-link.active { background-color: var(--accent-primary); color: var(--bg-dark); border-color: var(--accent-primary); }
+        
+        .story-chapter-content-area { background-color: var(--bg-surface); border-radius: 10px; padding: 30px 40px; box-shadow: 0 3px 10px rgba(0,0,0,0.2); }
+        .chapter-title-display { font-size: 2rem; font-weight: 600; margin-bottom: 25px; color: var(--accent-primary); padding-bottom: 15px; border-bottom: 1px solid var(--border-color); }
+        .chapter-text p { margin-bottom: 20px; font-size: 1.1rem; color: var(--text-primary); }
+
+        .story-actions { margin-top: 30px; display: flex; gap: 15px; }
+        
+        .comments-section { margin-top: 40px; }
+        .comments-header { font-size: 1.8rem; margin-bottom: 25px; color: var(--accent-primary); padding-bottom: 10px; border-bottom: 1px solid var(--border-color);}
+        
+        .comment-form {
+            background-color: var(--bg-surface); border-radius: 10px; padding: 25px;
+            margin-bottom: 30px; box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        .comment-form textarea {
+            width: 100%; padding: 15px; border: 1px solid var(--border-color); background-color: var(--bg-dark);
+            border-radius: 8px; font-size: 1rem; resize: vertical; min-height: 100px; margin-bottom: 15px; color: var(--text-primary);
+        }
+        .comment-form-row { display: flex; gap: 20px; margin-bottom: 20px; }
+        .comment-input-group { flex: 1; }
+        .comment-input-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-secondary); }
+        .comment-input-group input[type="text"], .comment-input-group input[type="file"] {
+            width: 100%; padding: 10px; border: 1px solid var(--border-color); background-color: var(--bg-dark);
+            border-radius: 8px; font-size: 1rem; color: var(--text-primary);
+        }
+        .comment-input-group input[type="file"] { padding: 7px; }
+
+        .profile-upload-container { display: flex; align-items: center; gap: 10px; }
+        .comment-profile-preview {
+            width: 45px; height: 45px; border-radius: 50%; object-fit: cover;
+            background-color: var(--bg-dark); border: 1px solid var(--border-color);
         }
         
+        .comment-list { display: flex; flex-direction: column; gap: 25px; }
         .comment {
-            background-color: white;
-            border-radius: 10px;
-            padding: 20px;
+            background-color: var(--bg-surface); border-radius: 10px; padding: 20px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
-        
-        .comment-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
+        .comment-header { display: flex; align-items: center; margin-bottom: 12px; }
         .comment-author-image {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 10px;
+            width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+            margin-right: 12px; border: 2px solid var(--accent-secondary);
         }
+        .comment-author-name { font-weight: 600; color: var(--accent-secondary); font-size: 1.05rem;}
+        .comment-timestamp { font-size: 0.8rem; color: var(--text-secondary); margin-left: auto;}
+        .comment-text { line-height: 1.6; color: var(--text-primary); }
         
-        .comment-author-name {
-            font-weight: 500;
+        .loading-message, .error-message {
+            text-align: center; padding: 60px 20px; font-size: 1.3rem; color: var(--text-secondary);
+            background-color: var(--bg-surface); border-radius: 8px;
         }
-        
-        .comment-text {
-            line-height: 1.6;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 50px;
-            font-size: 1.2rem;
-            color: #666;
-        }
-        
-        .error {
-            text-align: center;
-            padding: 50px;
-            font-size: 1.2rem;
-            color: #e53935;
-        }
-        
-        .back-button {
-            margin-bottom: 20px;
-            display: inline-block;
-        }
-        
+        .error-message { color: #ff6b6b; }
+        .loading-message i { font-size: 2.5rem; display: block; margin-bottom: 15px; color: var(--accent-primary); animation: spin 1.5s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .file-input { display: none; }
+
         @media (max-width: 768px) {
-            .story-title {
-                font-size: 2rem;
-            }
-            
-            .story-meta {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-            
-            .story-cover {
-                height: 300px;
-            }
-            
-            .story-content {
-                padding: 20px;
-                font-size: 1rem;
-            }
-
-            .comment-form-row {
-                flex-direction: column;
-            }
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-
-        .file-input {
-            display: none;
+            .navbar { padding: 15px 20px; }
+            .story-main-title { font-size: 2rem; }
+            .story-meta { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .story-cover-full { max-height: 300px; }
+            #storyDetailContainer, .story-chapter-content-area, .comment-form { padding: 20px; }
+            .chapter-title-display { font-size: 1.6rem; }
+            .comment-form-row { flex-direction: column; }
         }
     </style>
 </head>
 <body>
     <nav class="navbar">
-        <a href="/" class="logo">CeritaKu</a>
+        <a href="/" class="logo"><i class="fas fa-book-open"></i>CeritaKu</a>
         <div class="nav-links">
-            <a href="/">Beranda</a>
-            <a href="/" id="openUploadModal">Tulis Cerita</a>
+            <a href="/"><i class="fas fa-home"></i>Beranda</a>
+            <a href="/#openUploadModalLink"><i class="fas fa-feather-alt"></i>Tulis Cerita</a>
         </div>
     </nav>
     
     <div class="container">
-        <a href="/" class="button back-button">← Kembali ke Beranda</a>
+        <a href="/" class="button back-button"><i class="fas fa-arrow-left"></i>Kembali ke Beranda</a>
         
-        <div id="storyContainer" class="loading">
-            Memuat cerita...
+        <div id="storyDetailContainer" class="loading-message">
+            <i class="fas fa-spinner"></i>Memuat detail cerita...
         </div>
         
         <div class="comments-section">
-            <h2 class="comments-header">Komentar</h2>
+            <h2 class="comments-header"><i class="fas fa-comments"></i>Komentar</h2>
             <form id="commentForm" class="comment-form">
-                <textarea id="commentText" placeholder="Tulis komentar kamu..."></textarea>
+                <textarea id="commentText" placeholder="Bagikan pemikiranmu tentang cerita ini..." required></textarea>
                 <div class="comment-form-row">
                     <div class="comment-input-group">
-                        <label for="commentName">Nama</label>
-                        <input type="text" id="commentName" placeholder="Nama kamu">
+                        <label for="commentName">Nama Kamu</label>
+                        <input type="text" id="commentName" placeholder="Nama panggilan" required>
                     </div>
                     <div class="comment-input-group">
                         <label>Foto Profil (Opsional)</label>
                         <div class="profile-upload-container">
-                            <img id="profilePreview" class="profile-preview" src="/uploads/default-comment-profile.jpg" alt="Profile Preview">
-                            <label for="profileFile" class="profile-upload-btn">Pilih Foto</label>
-                            <input type="file" id="profileFile" class="file-input" accept="image/*">
+                            <img id="commentProfilePreview" class="comment-profile-preview" src="/uploads/default-comment-profile.jpg" alt="Profile Preview">
+                            <label for="commenterProfileFile" class="button button-secondary" style="padding: 8px 12px; font-size: 0.9rem;">
+                                <i class="fas fa-image"></i>Pilih Foto
+                            </label>
+                            <input type="file" id="commenterProfileFile" class="file-input" accept="image/*">
                         </div>
                     </div>
                 </div>
-                <button type="submit" id="submitComment" class="button">Kirim Komentar</button>
+                <button type="submit" id="submitComment" class="button" style="width: 100%;">
+                    <i class="fas fa-paper-plane"></i>Kirim Komentar
+                </button>
             </form>
             
             <div class="comment-list" id="commentList">
-                <!-- Comments will be loaded here -->
+                 <div class="loading-message" id="commentLoadingIndicator" style="font-size: 1rem; padding: 30px;">
+                    <i class="fas fa-spinner fa-sm"></i>Memuat komentar...
+                </div>
             </div>
         </div>
     </div>
     
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Get story ID from URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const storyId = urlParams.get('id');
-            
-            if (!storyId) {
-                document.getElementById('storyContainer').innerHTML = `
-                    <div class="error">
-                        <h2>Error: No story ID found</h2>
-                        <p>Please return to the <a href="/">home page</a> and select a story to read.</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            // Load story
-            loadStory(storyId);
-            
-            // Load comments
-            loadComments(storyId);
-            
-            // Profile image preview
-            const profileInput = document.getElementById('profileFile');
-            const profilePreview = document.getElementById('profilePreview');
-            
-            profileInput.addEventListener('change', function() {
-                if (this.files && this.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        profilePreview.src = e.target.result;
-                    }
-                    reader.readAsDataURL(this.files[0]);
-                }
-            });
-            
-            // Comment form submission
-            const commentForm = document.getElementById('commentForm');
-            const commentText = document.getElementById('commentText');
-            const commentName = document.getElementById('commentName');
-            
-            commentForm.addEventListener('submit', async function(event) {
-                event.preventDefault();
-                
-                if (!commentText.value.trim()) {
-                    alert('Silakan tulis komentar terlebih dahulu.');
-                    return;
-                }
-                
-                if (!commentName.value.trim()) {
-                    alert('Silakan masukkan nama kamu.');
-                    return;
-                }
-                
-                // Create form data for file upload
-                const formData = new FormData();
-                formData.append('storyId', storyId);
-                formData.append('name', commentName.value.trim());
-                formData.append('text', commentText.value.trim());
-                
-                // Add profile photo if selected
-                if (profileInput.files && profileInput.files[0]) {
-                    formData.append('profileImage', profileInput.files[0]);
-                }
-                
-                try {
-                    const response = await fetch('/api/comments', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    
-                    if (response.ok) {
-                        commentText.value = '';
-                        commentName.value = '';
-                        profilePreview.src = '/uploads/default-comment-profile.jpg';
-                        profileInput.value = '';
-                        loadComments(storyId); // Reload comments
-                    } else {
-                        const error = await response.json();
-                        alert('Error: ' + error.message);
-                    }
-                } catch (error) {
-                    alert('Terjadi kesalahan. Silakan coba lagi.');
-                    console.error('Error:', error);
-                }
-            });
-        });
-        
-        async function loadStory(storyId) {
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const storySlug = urlParams.get('slug');
+        const storyDetailContainer = document.getElementById('storyDetailContainer');
+        const commentList = document.getElementById('commentList');
+        const commentForm = document.getElementById('commentForm');
+        const commentLoadingIndicator = document.getElementById('commentLoadingIndicator');
+
+        let currentStoryData = null; // To store loaded story data
+        let currentChapterIndex = 0; // Default to first chapter
+
+        function displayMessage(container, type, message) {
+            container.innerHTML = `<div class="${type}-message">${message}</div>`;
+        }
+
+        async function loadStory(slug) {
             try {
-                const response = await fetch(`/api/stories/${storyId}`);
-                
+                const response = await fetch(`/api/stories/${slug}`);
                 if (!response.ok) {
-                    throw new Error('Story not found');
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
                 }
-                
-                const story = await response.json();
-                displayStory(story);
+                currentStoryData = await response.json();
+                displayStory(currentStoryData);
+                loadComments(slug); 
             } catch (error) {
                 console.error('Error loading story:', error);
-                document.getElementById('storyContainer').innerHTML = `
-                    <div class="error">
-                        <h2>Cerita tidak ditemukan</h2>
-                        <p>Silakan kembali ke <a href="/">halaman beranda</a> dan pilih cerita lain.</p>
-                    </div>
-                `;
+                displayMessage(storyDetailContainer, 'error', `<h2><i class="fas fa-heart-broken"></i> Cerita Tidak Ditemukan</h2><p>Detail error: ${error.message}. Mungkin cerita telah dihapus atau URL tidak valid. Silakan kembali ke <a href="/" class="button">beranda</a>.</p>`);
             }
         }
-        
+
         function displayStory(story) {
-            // Use default images if not provided
-            const imageUrl = story.imageUrl || '/uploads/default-cover.jpg';
-            const profileUrl = story.profileUrl || '/uploads/default-profile.jpg';
-            
-            const storyHTML = `
-                <div class="story-header">
-                    <h1 class="story-title">${story.title}</h1>
-                    <div class="story-meta">
-                        <div class="author-profile">
-                            <img src="${profileUrl}" alt="${story.author}" class="author-image">
-                            <span class="author-name">${story.author}</span>
-                        </div>
-                        <span class="genre-tag">${story.genre}</span>
+            document.title = `${story.title} - CeritaKu`;
+            const coverImg = story.coverImageUrl || '/uploads/default-cover.jpg';
+            const authorImg = story.authorProfileUrl || '/uploads/default-profile.jpg';
+
+            let tagsHTML = '';
+            if (story.tags && story.tags.length > 0) {
+                tagsHTML = story.tags.map(tag => `<span class="genre-tag" style="background-color: #424242; color: #bdbdbd; margin-right: 5px; margin-bottom: 5px;">#${tag}</span>`).join('');
+            }
+
+            storyDetailContainer.innerHTML = `
+                <h1 class="story-main-title">${story.title}</h1>
+                <div class="story-meta">
+                    <div class="author-profile">
+                        <img src="${authorImg}" alt="${story.authorName}" class="author-image">
+                        <span class="author-name">${story.authorName}</span>
+                    </div>
+                    <span class="genre-tag">${story.genre}</span>
+                    <div class="story-stats-inline">
+                        <span><i class="fas fa-eye"></i> ${story.views || 0} Dilihat</span>
+                        <span><i class="fas fa-heart"></i> ${story.likes || 0} Suka</span>
+                        <span><i class="fas fa-book-open"></i> ${story.chapters.length} Bab</span>
+                        <span><i class="fas ${story.status === 'Completed' ? 'fa-check-circle' : 'fa-spinner'}"></i> ${story.status}</span>
                     </div>
                 </div>
+                <div style="margin-bottom: 15px;">${tagsHTML}</div>
+                <img src="${coverImg}" alt="${story.title}" class="story-cover-full">
                 
-                <img src="${imageUrl}" alt="${story.title}" class="story-cover">
-                
-                <div class="story-content">
-                    ${formatContent(story.content)}
+                <div class="chapters-nav">
+                    <h3><i class="fas fa-list-ol"></i> Daftar Bab</h3>
+                    <div class="chapter-list" id="chapterListContainer">
+                        ${story.chapters.map((chap, index) => `
+                            <a href="#" class="chapter-link ${index === currentChapterIndex ? 'active' : ''}" data-chapter-index="${index}">
+                                ${chap.title}
+                            </a>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="story-chapter-content-area">
+                    <h2 class="chapter-title-display" id="currentChapterTitle"></h2>
+                    <div class="chapter-text" id="currentChapterContent"></div>
+                </div>
+
+                <div class="story-actions">
+                    <button class="button" id="likeButton"><i class="fas fa-thumbs-up"></i> Suka Cerita Ini (${story.likes || 0})</button>
+                    <!-- Placeholder for Add Chapter button, would need author check -->
+                    <!-- <button class="button button-secondary" id="addChapterButton"><i class="fas fa-plus-circle"></i> Tambah Bab Baru</button> -->
                 </div>
             `;
             
-            document.getElementById('storyContainer').innerHTML = storyHTML;
-            
-            // Update page title
-            document.title = `${story.title} - CeritaKu`;
+            renderChapterContent(currentChapterIndex);
+            setupChapterNavigation();
+            setupLikeButton(story.slug, story._id);
         }
         
-        function formatContent(content) {
-            // Convert newlines to proper HTML paragraphs
-            if (!content) return '';
+        function renderChapterContent(chapterIndex) {
+            if (!currentStoryData || !currentStoryData.chapters || chapterIndex < 0 || chapterIndex >= currentStoryData.chapters.length) {
+                document.getElementById('currentChapterTitle').textContent = "Bab tidak ditemukan";
+                document.getElementById('currentChapterContent').innerHTML = "<p>Konten bab ini tidak tersedia.</p>";
+                return;
+            }
+            currentChapterIndex = chapterIndex;
+            const chapter = currentStoryData.chapters[chapterIndex];
+            document.getElementById('currentChapterTitle').textContent = chapter.title;
             
-            return content.split('\n\n')
-                .filter(para => para.trim() !== '')
-                .map(para => `<p>${para.replace(/\n/g, '<br>')}</p>`)
-                .join('');
+            // Format content: replace \n\n with <p> and \n with <br>
+            const formattedContent = chapter.content.split(/\n\s*\n/).map(paragraph => 
+                `<p>${paragraph.replace(/\n/g, '<br>')}</p>`
+            ).join('');
+            document.getElementById('currentChapterContent').innerHTML = formattedContent;
+
+            // Update active chapter link
+            document.querySelectorAll('.chapter-link').forEach(link => {
+                link.classList.remove('active');
+                if (parseInt(link.dataset.chapterIndex) === chapterIndex) {
+                    link.classList.add('active');
+                }
+            });
         }
-        
-        async function loadComments(storyId) {
+
+        function setupChapterNavigation() {
+            const chapterLinks = document.querySelectorAll('.chapter-link');
+            chapterLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const newIndex = parseInt(this.dataset.chapterIndex);
+                    renderChapterContent(newIndex);
+                     // Scroll to top of chapter content for better UX on mobile
+                    document.getElementById('currentChapterTitle').scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+        }
+
+        async function setupLikeButton(slug, storyId) {
+            const likeButton = document.getElementById('likeButton');
+            if(likeButton) {
+                likeButton.addEventListener('click', async () => {
+                    likeButton.disabled = true;
+                    likeButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyukai...';
+                    try {
+                        const response = await fetch(`/api/stories/${slug}/like`, { method: 'POST' });
+                        if (response.ok) {
+                            const data = await response.json();
+                            currentStoryData.likes = data.likes; // Update local data
+                            likeButton.innerHTML = `<i class="fas fa-thumbs-up"></i> Suka Cerita Ini (${data.likes})`;
+                            // Potentially store liked state in localStorage to prevent multiple likes from same browser session
+                        } else {
+                            alert('Gagal menyukai cerita.');
+                            likeButton.innerHTML = `<i class="fas fa-thumbs-up"></i> Suka Cerita Ini (${currentStoryData.likes || 0})`;
+                        }
+                    } catch (error) {
+                        console.error('Error liking story:', error);
+                        alert('Terjadi kesalahan jaringan.');
+                        likeButton.innerHTML = `<i class="fas fa-thumbs-up"></i> Suka Cerita Ini (${currentStoryData.likes || 0})`;
+                    } finally {
+                        likeButton.disabled = false; 
+                    }
+                });
+            }
+        }
+
+        async function loadComments(slug) {
+            commentLoadingIndicator.style.display = 'block';
+            commentList.innerHTML = '';
             try {
-                const response = await fetch(`/api/comments/${storyId}`);
+                const response = await fetch(`/api/comments/${slug}`);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const comments = await response.json();
                 
-                const commentList = document.getElementById('commentList');
-                
+                commentLoadingIndicator.style.display = 'none';
                 if (comments.length === 0) {
-                    commentList.innerHTML = '<p style="text-align: center; padding: 20px; color: #666;">Belum ada komentar. Jadilah yang pertama berkomentar!</p>';
+                    commentList.innerHTML = '<p style="text-align: center; padding: 20px; color: var(--text-secondary);">Belum ada komentar. Jadilah yang pertama!</p>';
                     return;
                 }
-                
-                commentList.innerHTML = '';
-                
                 comments.forEach(comment => {
                     const commentElement = createCommentElement(comment);
                     commentList.appendChild(commentElement);
                 });
             } catch (error) {
                 console.error('Error loading comments:', error);
-                document.getElementById('commentList').innerHTML = 
-                    '<p style="text-align: center; padding: 20px; color: red;">Gagal memuat komentar. Silakan refresh halaman.</p>';
+                commentLoadingIndicator.style.display = 'none';
+                commentList.innerHTML = '<p style="text-align: center; padding: 20px; color: #ff6b6b;">Gagal memuat komentar. Coba muat ulang halaman.</p>';
             }
         }
-        
+
         function createCommentElement(comment) {
             const commentElement = document.createElement('div');
             commentElement.className = 'comment';
-            
-            // Use profile URL if provided, otherwise use default
-            const profileUrl = comment.profileUrl || '/uploads/default-comment-profile.jpg';
-            
+            const profileUrl = comment.commenterProfileUrl || '/uploads/default-comment-profile.jpg';
+            const commentDate = new Date(comment.createdAt).toLocaleString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'});
+
             commentElement.innerHTML = `
                 <div class="comment-header">
-                    <img src="${profileUrl}" alt="${comment.name}" class="comment-author-image">
-                    <span class="comment-author-name">${comment.name}</span>
+                    <img src="${profileUrl}" alt="${comment.commenterName}" class="comment-author-image">
+                    <span class="comment-author-name">${comment.commenterName}</span>
+                    <span class="comment-timestamp">${commentDate}</span>
                 </div>
-                <div class="comment-text">${comment.text}</div>
+                <div class="comment-text">${comment.text.replace(/\n/g, '<br>')}</div>
             `;
-            
             return commentElement;
         }
+
+        // Comment Form Logic
+        const commenterProfileInput = document.getElementById('commenterProfileFile');
+        const commenterProfilePreview = document.getElementById('commentProfilePreview');
+        
+        commenterProfileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => commenterProfilePreview.src = e.target.result;
+                reader.readAsDataURL(this.files[0]);
+            } else {
+                 commenterProfilePreview.src = '/uploads/default-comment-profile.jpg';
+            }
+        });
+         commenterProfilePreview.onerror = function() { // Fallback if URL is bad or local file fails
+            commenterProfilePreview.src = '/uploads/default-comment-profile.jpg';
+        };
+
+        commentForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const submitBtn = document.getElementById('submitComment');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+
+            const commentText = document.getElementById('commentText').value.trim();
+            const commenterName = document.getElementById('commentName').value.trim();
+            
+            if (!commentText || !commenterName) {
+                alert('Nama dan isi komentar tidak boleh kosong.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Komentar';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('storySlug', storySlug);
+            formData.append('commenterName', commenterName);
+            formData.append('text', commentText);
+            if (commenterProfileInput.files[0]) {
+                formData.append('commenterProfileFile', commenterProfileInput.files[0]);
+            }
+            
+            try {
+                const response = await fetch('/api/comments', { method: 'POST', body: formData });
+                if (response.ok) {
+                    commentForm.reset();
+                    commenterProfilePreview.src = '/uploads/default-comment-profile.jpg';
+                    loadComments(storySlug); 
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + (error.message || 'Gagal mengirim komentar.'));
+                }
+            } catch (error) {
+                alert('Terjadi kesalahan jaringan. Silakan coba lagi.');
+                console.error('Error submitting comment:', error);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Komentar';
+            }
+        });
+
+        if (storySlug) {
+            loadStory(storySlug);
+        } else {
+            displayMessage(storyDetailContainer, 'error', '<h2><i class="fas fa-link-slash"></i> ID Cerita Tidak Ditemukan</h2><p>URL tidak valid. Silakan kembali ke <a href="/" class="button">beranda</a> dan pilih cerita.</p>');
+        }
+    });
     </script>
 </body>
 </html>
