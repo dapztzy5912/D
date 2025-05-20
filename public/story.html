@@ -9,15 +9,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #121212;
-            --bg-surface: #1E1E1E;
-            --text-primary: #E0E0E0;
-            --text-secondary: #A0A0A0;
-            --accent-primary: #00BCD4; /* Cyan */
-            --accent-secondary: #FF9800; /* Orange */
-            --border-color: #333333;
+            --bg-dark: #121212; --bg-surface: #1E1E1E; --text-primary: #E0E0E0;
+            --text-secondary: #A0A0A0; --accent-primary: #00BCD4; --accent-secondary: #FF9800;
+            --border-color: #333333; --success-color: #4CAF50; --error-color: #F44336;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background-color: var(--bg-dark); color: var(--text-primary); line-height: 1.7; }
         
@@ -37,7 +32,6 @@
         .nav-links a i { margin-right: 6px; }
         
         .container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
-        
         .button {
             background-color: var(--accent-primary); color: var(--bg-dark); font-weight: 600;
             border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-size: 1rem;
@@ -47,19 +41,16 @@
         .button:hover { background-color: #00acc1; transform: translateY(-2px); }
         .button-secondary { background-color: var(--accent-secondary); color: var(--bg-dark); }
         .button-secondary:hover { background-color: #fb8c00; }
+        .button-outline { background-color: transparent; border: 2px solid var(--accent-primary); color: var(--accent-primary); }
+        .button-outline:hover { background-color: var(--accent-primary); color: var(--bg-dark); }
 
         .back-button { margin-bottom: 25px; }
 
         #storyDetailContainer {
-            background-color: var(--bg-surface);
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            background-color: var(--bg-surface); border-radius: 12px;
+            padding: 30px; margin-bottom: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.3);
         }
-        
         .story-main-title { font-size: 2.8rem; margin-bottom: 15px; color: var(--accent-primary); font-weight: 700;}
-        
         .story-meta { display: flex; align-items: center; margin-bottom: 25px; gap: 20px; flex-wrap: wrap; }
         .author-profile { display: flex; align-items: center; }
         .author-image {
@@ -67,18 +58,18 @@
             margin-right: 15px; border: 3px solid var(--accent-primary);
         }
         .author-name { font-size: 1.1rem; font-weight: 500; color: var(--text-primary); }
-        .genre-tag {
+        .genre-tag-detail { /* Renamed to avoid conflict */
             background-color: var(--accent-secondary); color: var(--bg-dark); padding: 6px 15px;
             border-radius: 20px; font-size: 0.9rem; font-weight: 500;
         }
         .story-stats-inline span { display: inline-flex; align-items: center; margin-right: 15px; color: var(--text-secondary); font-size: 0.9rem; }
         .story-stats-inline i { margin-right: 6px; color: var(--accent-primary); }
-
-        .story-cover-full {
-            width: 100%; max-height: 450px; object-fit: cover;
-            border-radius: 10px; margin-bottom: 30px;
+        .tags-container span {
+            background-color: #424242; color: #bdbdbd; margin-right: 8px; margin-bottom: 8px;
+            padding: 5px 12px; border-radius: 15px; font-size: 0.85rem; display: inline-block;
         }
-        
+
+        .story-cover-full { width: 100%; max-height: 450px; object-fit: cover; border-radius: 10px; margin-bottom: 30px; }
         .chapters-nav { margin-bottom: 30px; padding: 15px; background-color: var(--bg-dark); border-radius: 8px; }
         .chapters-nav h3 { margin-bottom: 15px; font-size: 1.3rem; color: var(--accent-primary); }
         .chapter-list { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -92,12 +83,10 @@
         .story-chapter-content-area { background-color: var(--bg-surface); border-radius: 10px; padding: 30px 40px; box-shadow: 0 3px 10px rgba(0,0,0,0.2); }
         .chapter-title-display { font-size: 2rem; font-weight: 600; margin-bottom: 25px; color: var(--accent-primary); padding-bottom: 15px; border-bottom: 1px solid var(--border-color); }
         .chapter-text p { margin-bottom: 20px; font-size: 1.1rem; color: var(--text-primary); }
-
-        .story-actions { margin-top: 30px; display: flex; gap: 15px; }
+        .story-actions { margin-top: 30px; display: flex; gap: 15px; flex-wrap: wrap; }
         
         .comments-section { margin-top: 40px; }
         .comments-header { font-size: 1.8rem; margin-bottom: 25px; color: var(--accent-primary); padding-bottom: 10px; border-bottom: 1px solid var(--border-color);}
-        
         .comment-form {
             background-color: var(--bg-surface); border-radius: 10px; padding: 25px;
             margin-bottom: 30px; box-shadow: 0 3px 10px rgba(0,0,0,0.2);
@@ -114,13 +103,11 @@
             border-radius: 8px; font-size: 1rem; color: var(--text-primary);
         }
         .comment-input-group input[type="file"] { padding: 7px; }
-
         .profile-upload-container { display: flex; align-items: center; gap: 10px; }
         .comment-profile-preview {
             width: 45px; height: 45px; border-radius: 50%; object-fit: cover;
             background-color: var(--bg-dark); border: 1px solid var(--border-color);
         }
-        
         .comment-list { display: flex; flex-direction: column; gap: 25px; }
         .comment {
             background-color: var(--bg-surface); border-radius: 10px; padding: 20px;
@@ -139,11 +126,19 @@
             text-align: center; padding: 60px 20px; font-size: 1.3rem; color: var(--text-secondary);
             background-color: var(--bg-surface); border-radius: 8px;
         }
-        .error-message { color: #ff6b6b; }
+        .error-message { color: var(--error-color); }
         .loading-message i { font-size: 2.5rem; display: block; margin-bottom: 15px; color: var(--accent-primary); animation: spin 1.5s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
         .file-input { display: none; }
+        .toast-notification {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background-color: var(--bg-surface); color: var(--text-primary); padding: 12px 25px;
+            border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 2000; opacity: 0; transition: opacity 0.5s, bottom 0.5s; pointer-events: none;
+        }
+        .toast-notification.show { opacity: 1; bottom: 40px; pointer-events: auto; }
+        .toast-notification.success { background-color: var(--success-color); color: var(--bg-dark); }
+        .toast-notification.error { background-color: var(--error-color); color: var(--bg-dark); }
 
         @media (max-width: 768px) {
             .navbar { padding: 15px 20px; }
@@ -158,19 +153,16 @@
 </head>
 <body>
     <nav class="navbar">
-        <a href="/" class="logo"><i class="fas fa-book-open"></i>CeritaKu</a>
+        <a href="/" class="logo"><i class="fas fa-book-open-reader"></i>CeritaKu</a>
         <div class="nav-links">
-            <a href="/"><i class="fas fa-home"></i>Beranda</a>
-            <a href="/#openUploadModalLink"><i class="fas fa-feather-alt"></i>Tulis Cerita</a>
+            <a href="/"><i class="fas fa-home-alt"></i>Beranda</a>
+            <a href="/#openUploadModalLink" id="navWriteStoryLink"><i class="fas fa-pen-fancy"></i>Tulis Cerita</a>
         </div>
     </nav>
     
     <div class="container">
         <a href="/" class="button back-button"><i class="fas fa-arrow-left"></i>Kembali ke Beranda</a>
-        
-        <div id="storyDetailContainer" class="loading-message">
-            <i class="fas fa-spinner"></i>Memuat detail cerita...
-        </div>
+        <div id="storyDetailContainer" class="loading-message"><i class="fas fa-spinner"></i>Memuat detail cerita...</div>
         
         <div class="comments-section">
             <h2 class="comments-header"><i class="fas fa-comments"></i>Komentar</h2>
@@ -196,7 +188,6 @@
                     <i class="fas fa-paper-plane"></i>Kirim Komentar
                 </button>
             </form>
-            
             <div class="comment-list" id="commentList">
                  <div class="loading-message" id="commentLoadingIndicator" style="font-size: 1rem; padding: 30px;">
                     <i class="fas fa-spinner fa-sm"></i>Memuat komentar...
@@ -204,6 +195,7 @@
             </div>
         </div>
     </div>
+    <div id="toastNotification" class="toast-notification">Pesan Notifikasi</div>
     
     <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -213,9 +205,38 @@
         const commentList = document.getElementById('commentList');
         const commentForm = document.getElementById('commentForm');
         const commentLoadingIndicator = document.getElementById('commentLoadingIndicator');
+        const toastNotification = document.getElementById('toastNotification');
+        let currentStoryData = null;
+        let currentChapterIndex = 0;
 
-        let currentStoryData = null; // To store loaded story data
-        let currentChapterIndex = 0; // Default to first chapter
+        function showToast(message, type = 'info') {
+            toastNotification.textContent = message;
+            toastNotification.className = 'toast-notification show';
+            if (type === 'success') toastNotification.classList.add('success');
+            else if (type === 'error') toastNotification.classList.add('error');
+            setTimeout(() => {
+                toastNotification.className = 'toast-notification';
+                toastNotification.classList.remove('success', 'error');
+            }, 3000);
+        }
+
+        async function shareStory(title, text, url) {
+            const shareData = { title, text, url };
+            try {
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                } else if (navigator.clipboard) {
+                    await navigator.clipboard.writeText(url);
+                    showToast('Link cerita disalin ke clipboard!', 'success');
+                } else {
+                    showToast('Browser tidak mendukung fitur berbagi. Salin link manual.', 'info');
+                }
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    showToast('Gagal membagikan cerita.', 'error');
+                }
+            }
+        }
 
         function displayMessage(container, type, message) {
             container.innerHTML = `<div class="${type}-message">${message}</div>`;
@@ -232,8 +253,7 @@
                 displayStory(currentStoryData);
                 loadComments(slug); 
             } catch (error) {
-                console.error('Error loading story:', error);
-                displayMessage(storyDetailContainer, 'error', `<h2><i class="fas fa-heart-broken"></i> Cerita Tidak Ditemukan</h2><p>Detail error: ${error.message}. Mungkin cerita telah dihapus atau URL tidak valid. Silakan kembali ke <a href="/" class="button">beranda</a>.</p>`);
+                displayMessage(storyDetailContainer, 'error', `<h2><i class="fas fa-heart-broken"></i> Cerita Tidak Ditemukan</h2><p>${error.message}. Kembali ke <a href="/" class="button">beranda</a>.</p>`);
             }
         }
 
@@ -241,230 +261,187 @@
             document.title = `${story.title} - CeritaKu`;
             const coverImg = story.coverImageUrl || '/uploads/default-cover.jpg';
             const authorImg = story.authorProfileUrl || '/uploads/default-profile.jpg';
+            const storyUrl = window.location.href;
 
             let tagsHTML = '';
             if (story.tags && story.tags.length > 0) {
-                tagsHTML = story.tags.map(tag => `<span class="genre-tag" style="background-color: #424242; color: #bdbdbd; margin-right: 5px; margin-bottom: 5px;">#${tag}</span>`).join('');
+                tagsHTML = `<div class="tags-container" style="margin-bottom: 15px;">${story.tags.map(tag => `<span>#${tag}</span>`).join('')}</div>`;
             }
 
             storyDetailContainer.innerHTML = `
                 <h1 class="story-main-title">${story.title}</h1>
                 <div class="story-meta">
-                    <div class="author-profile">
-                        <img src="${authorImg}" alt="${story.authorName}" class="author-image">
-                        <span class="author-name">${story.authorName}</span>
-                    </div>
-                    <span class="genre-tag">${story.genre}</span>
+                    <div class="author-profile"><img src="${authorImg}" alt="${story.authorName}" class="author-image"><span class="author-name">${story.authorName}</span></div>
+                    <span class="genre-tag-detail">${story.genre}</span>
                     <div class="story-stats-inline">
-                        <span><i class="fas fa-eye"></i> ${story.views || 0} Dilihat</span>
-                        <span><i class="fas fa-heart"></i> ${story.likes || 0} Suka</span>
+                        <span><i class="fas fa-eye"></i> ${story.views || 0}</span>
+                        <span><i class="fas fa-heart"></i> ${story.likes || 0}</span>
                         <span><i class="fas fa-book-open"></i> ${story.chapters.length} Bab</span>
                         <span><i class="fas ${story.status === 'Completed' ? 'fa-check-circle' : 'fa-spinner'}"></i> ${story.status}</span>
                     </div>
                 </div>
-                <div style="margin-bottom: 15px;">${tagsHTML}</div>
+                ${tagsHTML}
                 <img src="${coverImg}" alt="${story.title}" class="story-cover-full">
-                
                 <div class="chapters-nav">
                     <h3><i class="fas fa-list-ol"></i> Daftar Bab</h3>
                     <div class="chapter-list" id="chapterListContainer">
-                        ${story.chapters.map((chap, index) => `
+                        ${story.chapters.sort((a,b) => a.order - b.order).map((chap, index) => `
                             <a href="#" class="chapter-link ${index === currentChapterIndex ? 'active' : ''}" data-chapter-index="${index}">
                                 ${chap.title}
-                            </a>
-                        `).join('')}
+                            </a>`).join('')}
                     </div>
                 </div>
-
                 <div class="story-chapter-content-area">
                     <h2 class="chapter-title-display" id="currentChapterTitle"></h2>
                     <div class="chapter-text" id="currentChapterContent"></div>
                 </div>
-
                 <div class="story-actions">
-                    <button class="button" id="likeButton"><i class="fas fa-thumbs-up"></i> Suka Cerita Ini (${story.likes || 0})</button>
-                    <!-- Placeholder for Add Chapter button, would need author check -->
-                    <!-- <button class="button button-secondary" id="addChapterButton"><i class="fas fa-plus-circle"></i> Tambah Bab Baru</button> -->
-                </div>
-            `;
+                    <button class="button" id="likeButton"><i class="fas fa-thumbs-up"></i> Suka (${story.likes || 0})</button>
+                    <button class="button button-outline" id="shareButtonPage"><i class="fas fa-share-alt"></i> Bagikan</button>
+                </div>`;
             
             renderChapterContent(currentChapterIndex);
             setupChapterNavigation();
-            setupLikeButton(story.slug, story._id);
+            setupLikeButton(story.slug);
+            document.getElementById('shareButtonPage').addEventListener('click', () => {
+                shareStory(story.title, `Saya sedang membaca: "${story.title}" oleh ${story.authorName} di CeritaKu!`, storyUrl);
+            });
         }
         
         function renderChapterContent(chapterIndex) {
             if (!currentStoryData || !currentStoryData.chapters || chapterIndex < 0 || chapterIndex >= currentStoryData.chapters.length) {
                 document.getElementById('currentChapterTitle').textContent = "Bab tidak ditemukan";
-                document.getElementById('currentChapterContent').innerHTML = "<p>Konten bab ini tidak tersedia.</p>";
-                return;
+                document.getElementById('currentChapterContent').innerHTML = "<p>Konten bab ini tidak tersedia.</p>"; return;
             }
             currentChapterIndex = chapterIndex;
-            const chapter = currentStoryData.chapters[chapterIndex];
+            const chapter = currentStoryData.chapters.sort((a,b) => a.order - b.order)[chapterIndex];
             document.getElementById('currentChapterTitle').textContent = chapter.title;
-            
-            // Format content: replace \n\n with <p> and \n with <br>
-            const formattedContent = chapter.content.split(/\n\s*\n/).map(paragraph => 
-                `<p>${paragraph.replace(/\n/g, '<br>')}</p>`
-            ).join('');
+            const formattedContent = chapter.content.split(/\n\s*\n/).map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
             document.getElementById('currentChapterContent').innerHTML = formattedContent;
-
-            // Update active chapter link
             document.querySelectorAll('.chapter-link').forEach(link => {
                 link.classList.remove('active');
-                if (parseInt(link.dataset.chapterIndex) === chapterIndex) {
-                    link.classList.add('active');
-                }
+                if (parseInt(link.dataset.chapterIndex) === chapterIndex) link.classList.add('active');
             });
         }
 
         function setupChapterNavigation() {
-            const chapterLinks = document.querySelectorAll('.chapter-link');
-            chapterLinks.forEach(link => {
+            document.querySelectorAll('.chapter-link').forEach(link => {
                 link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const newIndex = parseInt(this.dataset.chapterIndex);
-                    renderChapterContent(newIndex);
-                     // Scroll to top of chapter content for better UX on mobile
+                    e.preventDefault(); renderChapterContent(parseInt(this.dataset.chapterIndex));
                     document.getElementById('currentChapterTitle').scrollIntoView({ behavior: 'smooth' });
                 });
             });
         }
 
-        async function setupLikeButton(slug, storyId) {
+        async function setupLikeButton(slug) {
             const likeButton = document.getElementById('likeButton');
-            if(likeButton) {
-                likeButton.addEventListener('click', async () => {
-                    likeButton.disabled = true;
-                    likeButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyukai...';
-                    try {
-                        const response = await fetch(`/api/stories/${slug}/like`, { method: 'POST' });
-                        if (response.ok) {
-                            const data = await response.json();
-                            currentStoryData.likes = data.likes; // Update local data
-                            likeButton.innerHTML = `<i class="fas fa-thumbs-up"></i> Suka Cerita Ini (${data.likes})`;
-                            // Potentially store liked state in localStorage to prevent multiple likes from same browser session
-                        } else {
-                            alert('Gagal menyukai cerita.');
-                            likeButton.innerHTML = `<i class="fas fa-thumbs-up"></i> Suka Cerita Ini (${currentStoryData.likes || 0})`;
-                        }
-                    } catch (error) {
-                        console.error('Error liking story:', error);
-                        alert('Terjadi kesalahan jaringan.');
-                        likeButton.innerHTML = `<i class="fas fa-thumbs-up"></i> Suka Cerita Ini (${currentStoryData.likes || 0})`;
-                    } finally {
-                        likeButton.disabled = false; 
+            if(!likeButton) return;
+            likeButton.addEventListener('click', async () => {
+                likeButton.disabled = true; likeButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyukai...';
+                try {
+                    const response = await fetch(`/api/stories/${slug}/like`, { method: 'POST' });
+                    if (response.ok) {
+                        const data = await response.json();
+                        currentStoryData.likes = data.likes;
+                        likeButton.innerHTML = `<i class="fas fa-thumbs-up"></i> Suka (${data.likes})`;
+                        showToast('Cerita disukai!', 'success');
+                    } else {
+                        showToast('Gagal menyukai cerita.', 'error');
+                        likeButton.innerHTML = `<i class="fas fa-thumbs-up"></i> Suka (${currentStoryData.likes || 0})`;
                     }
-                });
-            }
+                } catch (error) {
+                    showToast('Kesalahan jaringan saat menyukai.', 'error');
+                    likeButton.innerHTML = `<i class="fas fa-thumbs-up"></i> Suka (${currentStoryData.likes || 0})`;
+                } finally {
+                    likeButton.disabled = false; 
+                }
+            });
         }
 
         async function loadComments(slug) {
-            commentLoadingIndicator.style.display = 'block';
-            commentList.innerHTML = '';
+            commentLoadingIndicator.style.display = 'block'; commentList.innerHTML = '';
             try {
                 const response = await fetch(`/api/comments/${slug}`);
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const comments = await response.json();
-                
                 commentLoadingIndicator.style.display = 'none';
                 if (comments.length === 0) {
-                    commentList.innerHTML = '<p style="text-align: center; padding: 20px; color: var(--text-secondary);">Belum ada komentar. Jadilah yang pertama!</p>';
-                    return;
+                    commentList.innerHTML = '<p style="text-align: center; padding: 20px; color: var(--text-secondary);">Belum ada komentar.</p>'; return;
                 }
-                comments.forEach(comment => {
-                    const commentElement = createCommentElement(comment);
-                    commentList.appendChild(commentElement);
-                });
+                comments.forEach(comment => commentList.appendChild(createCommentElement(comment)));
             } catch (error) {
-                console.error('Error loading comments:', error);
                 commentLoadingIndicator.style.display = 'none';
-                commentList.innerHTML = '<p style="text-align: center; padding: 20px; color: #ff6b6b;">Gagal memuat komentar. Coba muat ulang halaman.</p>';
+                commentList.innerHTML = '<p style="text-align: center; padding: 20px; color: var(--error-color);">Gagal memuat komentar.</p>';
             }
         }
 
         function createCommentElement(comment) {
-            const commentElement = document.createElement('div');
-            commentElement.className = 'comment';
+            const el = document.createElement('div'); el.className = 'comment';
             const profileUrl = comment.commenterProfileUrl || '/uploads/default-comment-profile.jpg';
-            const commentDate = new Date(comment.createdAt).toLocaleString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'});
-
-            commentElement.innerHTML = `
+            const date = new Date(comment.createdAt).toLocaleString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'});
+            el.innerHTML = `
                 <div class="comment-header">
                     <img src="${profileUrl}" alt="${comment.commenterName}" class="comment-author-image">
                     <span class="comment-author-name">${comment.commenterName}</span>
-                    <span class="comment-timestamp">${commentDate}</span>
+                    <span class="comment-timestamp">${date}</span>
                 </div>
-                <div class="comment-text">${comment.text.replace(/\n/g, '<br>')}</div>
-            `;
-            return commentElement;
+                <div class="comment-text">${comment.text.replace(/\n/g, '<br>')}</div>`;
+            return el;
         }
 
-        // Comment Form Logic
         const commenterProfileInput = document.getElementById('commenterProfileFile');
         const commenterProfilePreview = document.getElementById('commentProfilePreview');
-        
         commenterProfileInput.addEventListener('change', function() {
             if (this.files && this.files[0]) {
                 const reader = new FileReader();
                 reader.onload = (e) => commenterProfilePreview.src = e.target.result;
                 reader.readAsDataURL(this.files[0]);
-            } else {
-                 commenterProfilePreview.src = '/uploads/default-comment-profile.jpg';
-            }
+            } else { commenterProfilePreview.src = '/uploads/default-comment-profile.jpg'; }
         });
-         commenterProfilePreview.onerror = function() { // Fallback if URL is bad or local file fails
-            commenterProfilePreview.src = '/uploads/default-comment-profile.jpg';
-        };
+        commenterProfilePreview.onerror = () => commenterProfilePreview.src = '/uploads/default-comment-profile.jpg';
 
         commentForm.addEventListener('submit', async function(event) {
             event.preventDefault();
             const submitBtn = document.getElementById('submitComment');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
-
-            const commentText = document.getElementById('commentText').value.trim();
-            const commenterName = document.getElementById('commentName').value.trim();
-            
-            if (!commentText || !commenterName) {
-                alert('Nama dan isi komentar tidak boleh kosong.');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Komentar';
-                return;
-            }
-
+            submitBtn.disabled = true; submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
             const formData = new FormData();
             formData.append('storySlug', storySlug);
-            formData.append('commenterName', commenterName);
-            formData.append('text', commentText);
-            if (commenterProfileInput.files[0]) {
-                formData.append('commenterProfileFile', commenterProfileInput.files[0]);
-            }
+            formData.append('commenterName', document.getElementById('commentName').value.trim());
+            formData.append('text', document.getElementById('commentText').value.trim());
+            if (commenterProfileInput.files[0]) formData.append('commenterProfileFile', commenterProfileInput.files[0]);
             
+            if (!formData.get('commenterName') || !formData.get('text')) {
+                 showToast('Nama dan isi komentar tidak boleh kosong.', 'error');
+                 submitBtn.disabled = false; submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Komentar';
+                 return;
+            }
             try {
                 const response = await fetch('/api/comments', { method: 'POST', body: formData });
+                const responseData = await response.json();
                 if (response.ok) {
-                    commentForm.reset();
-                    commenterProfilePreview.src = '/uploads/default-comment-profile.jpg';
+                    showToast('Komentar berhasil dikirim!', 'success');
+                    commentForm.reset(); commenterProfilePreview.src = '/uploads/default-comment-profile.jpg';
                     loadComments(storySlug); 
                 } else {
-                    const error = await response.json();
-                    alert('Error: ' + (error.message || 'Gagal mengirim komentar.'));
+                    showToast(`Error: ${responseData.message || 'Gagal kirim komentar.'}`, 'error');
                 }
             } catch (error) {
-                alert('Terjadi kesalahan jaringan. Silakan coba lagi.');
-                console.error('Error submitting comment:', error);
+                showToast('Kesalahan jaringan. Coba lagi.', 'error');
             } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Komentar';
+                submitBtn.disabled = false; submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Komentar';
             }
         });
 
-        if (storySlug) {
-            loadStory(storySlug);
-        } else {
-            displayMessage(storyDetailContainer, 'error', '<h2><i class="fas fa-link-slash"></i> ID Cerita Tidak Ditemukan</h2><p>URL tidak valid. Silakan kembali ke <a href="/" class="button">beranda</a> dan pilih cerita.</p>');
+        if (storySlug) loadStory(storySlug);
+        else displayMessage(storyDetailContainer, 'error', '<h2><i class="fas fa-link-slash"></i> URL Tidak Valid</h2><p>Kembali ke <a href="/" class="button">beranda</a>.</p>');
+        if(window.location.hash === '#openUploadModalLink' && document.getElementById('navWriteStoryLink')) {
+   
         }
+        document.getElementById('navWriteStoryLink').addEventListener('click', function(e) {
+            e.preventDefault(); // Prevent default anchor behavior
+            window.location.href = '/#openUploadModalLink';
+        });
+
     });
     </script>
 </body>
