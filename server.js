@@ -1,328 +1,287 @@
 
 const express = require('express');
+const mongoose = require('mongoose');
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
-const axios = require('axios');
+const fs = require('fs');
+const slugify = require('slugify');
+
 const app = express();
+const port = process.env.PORT || 3000;
 
-// Middleware
+mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://zanssxploit:pISqUYgJJDfnLW9b@cluster0.fgram.mongodb.net/dafa_db?retryWrites=true&w=majority', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+.then(() => console.log('MongoDB Connected'))
+.catch(err => console.error('MongoDB Connection Error:', err));
+
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Create necessary directories if they don't exist
-const uploadDir = path.join(__dirname, 'public', 'uploads');
-const dataDir = path.join(__dirname, 'data');
-
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+const UPLOADS_DIR = path.join(__dirname, 'uploads');
+if (!fs.existsSync(UPLOADS_DIR)) {
+    fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 }
 
-if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-}
-
-// Copy default images if they don't exist
-const defaultImages = [
-    { name: 'default-cover.jpg', url: 'https://via.placeholder.com/800x400?text=Default+Cover' },
-    { name: 'default-profile.jpg', url: 'https://via.placeholder.com/200x200?text=Profile' },
-    { name: 'default-comment-profile.jpg', url: 'https://via.placeholder.com/100x100?text=User' }
-];
-
-async function downloadDefaultImages() {
-    for (const image of defaultImages) {
-        const imagePath = path.join(uploadDir, image.name);
-        if (!fs.existsSync(imagePath)) {
-            try {
-                const response = await axios({
-                    method: 'get',
-                    url: image.url,
-                    responseType: 'stream'
-                });
-                response.data.pipe(fs.createWriteStream(imagePath));
-                console.log(`Downloaded ${image.name}`);
-            } catch (error) {
-                console.error(`Failed to download ${image.name}:`, error.message);
-            }
-        }
-    }
-}
-
-downloadDefaultImages();
-
-// Setup multer for file uploads
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, uploadDir);
+        cb(null, UPLOADS_DIR);
     },
     filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const ext = path.extname(file.originalname);
-        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+        cb(null, uuidv4() + path.extname(file.originalname));
     }
 });
-
 const upload = multer({ 
     storage: storage,
-    limits: {
-        fileSize: 5 * 1024 * 1024, // 5MB limit
-    },
-    fileFilter: function(req, file, cb) {
-        const filetypes = /jpeg|jpg|png|gif/;
-        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-        const mimetype = filetypes.test(file.mimetype);
-
-        if (mimetype && extname) {
-            return cb(null, true);
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
         } else {
-            cb(new Error('Only image files are allowed!'));
+            cb(new Error('Hanya file gambar yang diizinkan!'), false);
         }
     }
 });
 
-// Data file paths
-const storiesFilePath = path.join(dataDir, 'stories.json');
-const commentsFilePath = path.join(dataDir, 'comments.json');
+const ChapterSchema = new mongoose.Schema({
+    title: { type: String, required: true, trim: true },
+    content: { type: String, required: true },
+    order: { type: Number, default: 1 }
+}, { timestamps: true });
 
-// Initialize data files if they don't exist
-if (!fs.existsSync(storiesFilePath)) {
-    fs.writeFileSync(storiesFilePath, JSON.stringify([]));
-}
+const StorySchema = new mongoose.Schema({
+    title: { type: String, required: true, trim: true },
+    slug: { type: String, required: true, unique: true, index: true },
+    genre: { type: String, required: true },
+    authorName: { type: String, required: true },
+    authorProfileUrl: { type: String, default: '/uploads/default-profile.jpg' },
+    coverImageUrl: { type: String, default: '/uploads/default-cover.jpg' },
+    chapters: [ChapterSchema],
+    views: { type: Number, default: 0 },
+    likes: { type: Number, default: 0 },
+    tags: [{ type: String, trim: true }],
+    status: { type: String, enum: ['Ongoing', 'Completed'], default: 'Ongoing' }
+}, { timestamps: true });
 
-if (!fs.existsSync(commentsFilePath)) {
-    fs.writeFileSync(commentsFilePath, JSON.stringify([]));
-}
-
-// Helper functions for reading/writing data
-function readStoriesData() {
-    const data = fs.readFileSync(storiesFilePath);
-    return JSON.parse(data);
-}
-
-function writeStoriesData(data) {
-    fs.writeFileSync(storiesFilePath, JSON.stringify(data, null, 2));
-}
-
-function readCommentsData() {
-    const data = fs.readFileSync(commentsFilePath);
-    return JSON.parse(data);
-}
-
-function writeCommentsData(data) {
-    fs.writeFileSync(commentsFilePath, JSON.stringify(data, null, 2));
-}
-
-// Helper function to download image from URL
-async function downloadImage(url, filename) {
-    try {
-        const response = await axios({
-            method: 'get',
-            url: url,
-            responseType: 'stream'
-        });
-        
-        const filePath = path.join(uploadDir, filename);
-        const writer = fs.createWriteStream(filePath);
-        
-        response.data.pipe(writer);
-        
-        return new Promise((resolve, reject) => {
-            writer.on('finish', () => resolve(path.join('/uploads', filename)));
-            writer.on('error', reject);
-        });
-    } catch (error) {
-        console.error('Error downloading image:', error);
-        throw new Error('Failed to download image');
+StorySchema.pre('validate', function(next) {
+    if (this.title && (this.isNew || this.isModified('title'))) {
+        this.slug = slugify(this.title, { lower: true, strict: true, remove: /[*+~.()'"!:@]/g });
     }
-}
-
-// Routes
-
-// Serve HTML files
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    next();
 });
 
-app.get('/story.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'story.html'));
-});
 
-// API Routes
+const CommentSchema = new mongoose.Schema({
+    storyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Story', required: true },
+    commenterName: { type: String, required: true },
+    commenterProfileUrl: { type: String, default: '/uploads/default-comment-profile.jpg' },
+    text: { type: String, required: true },
+}, { timestamps: true });
 
-// Get all stories
-app.get('/api/stories', (req, res) => {
-    try {
-        const stories = readStoriesData();
-        res.json(stories);
-    } catch (error) {
-        console.error('Error getting stories:', error);
-        res.status(500).json({ message: 'Failed to retrieve stories' });
-    }
-});
+const Story = mongoose.model('Story', StorySchema);
+const Comment = mongoose.model('Comment', CommentSchema);
 
-// Get a specific story
-app.get('/api/stories/:id', (req, res) => {
-    try {
-        const stories = readStoriesData();
-        const story = stories.find(s => s.id === req.params.id);
-        
-        if (!story) {
-            return res.status(404).json({ message: 'Story not found' });
-        }
-        
-        res.json(story);
-    } catch (error) {
-        console.error('Error getting story:', error);
-        res.status(500).json({ message: 'Failed to retrieve story' });
-    }
-});
 
-// Upload a new story
 app.post('/api/stories', upload.fields([
-    { name: 'imageFile', maxCount: 1 },
-    { name: 'profileFile', maxCount: 1 }
+    { name: 'coverImageFile', maxCount: 1 }, 
+    { name: 'authorProfileFile', maxCount: 1 }
 ]), async (req, res) => {
     try {
-        // Get form data
-        const { title, genre, content, author, imageUrl, profileUrl } = req.body;
-        
-        // Validate required fields
-        if (!title || !genre || !content || !author) {
-            return res.status(400).json({ message: 'All fields are required' });
-        }
-        
-        // Process story cover image
-        let finalImageUrl = '/uploads/default-cover.jpg';
-        
-        if (req.files && req.files.imageFile && req.files.imageFile[0]) {
-            // Use uploaded file
-            finalImageUrl = `/uploads/${req.files.imageFile[0].filename}`;
-        } else if (imageUrl) {
-            // Download from URL
-            try {
-                const filename = `story-cover-${Date.now()}${path.extname(imageUrl) || '.jpg'}`;
-                finalImageUrl = await downloadImage(imageUrl, filename);
-            } catch (error) {
-                console.error('Error downloading story image:', error);
-                // Use default if download fails
+        const { title, genre, firstChapterContent, firstChapterTitle, authorName, coverImageUrl, authorProfileUrl, tags, status } = req.body;
+        const requiredFieldsFromForm = {
+            title: title,
+            genre: genre,
+            firstChapterContent: firstChapterContent,
+            authorName: authorName
+        };
+        const missingFields = [];
+        const fieldNameMap = {
+            title: 'Judul Cerita',
+            genre: 'Genre',
+            firstChapterContent: 'Isi Bab Pertama',
+            authorName: 'Nama Penulis'
+        };
+
+        for (const fieldKey in requiredFieldsFromForm) {
+            if (!requiredFieldsFromForm[fieldKey] || requiredFieldsFromForm[fieldKey].trim() === '') {
+                missingFields.push(fieldNameMap[fieldKey]);
             }
         }
-        
-        // Process profile image
-        let finalProfileUrl = '/uploads/default-profile.jpg';
-        
-        if (req.files && req.files.profileFile && req.files.profileFile[0]) {
-            // Use uploaded file
-            finalProfileUrl = `/uploads/${req.files.profileFile[0].filename}`;
-        } else if (profileUrl) {
-            // Download from URL
-            try {
-                const filename = `profile-${Date.now()}${path.extname(profileUrl) || '.jpg'}`;
-                finalProfileUrl = await downloadImage(profileUrl, filename);
-            } catch (error) {
-                console.error('Error downloading profile image:', error);
-                // Use default if download fails
-            }
+
+        if (missingFields.length > 0) {
+            return res.status(400).json({ message: `Kolom berikut harus diisi: ${missingFields.join(', ')}.` });
+        }
+
+        let finalCoverImageUrl = coverImageUrl || '/uploads/default-cover.jpg';
+        if (req.files && req.files.coverImageFile && req.files.coverImageFile[0]) {
+            finalCoverImageUrl = `/uploads/${req.files.coverImageFile[0].filename}`;
+        }
+
+        let finalAuthorProfileUrl = authorProfileUrl || '/uploads/default-profile.jpg';
+        if (req.files && req.files.authorProfileFile && req.files.authorProfileFile[0]) {
+            finalAuthorProfileUrl = `/uploads/${req.files.authorProfileFile[0].filename}`;
         }
         
-        // Create story object
-        const newStory = {
-            id: uuidv4(),
+        const tempSlug = slugify(title, { lower: true, strict: true, remove: /[*+~.()'"!:@]/g });
+        const existingStory = await Story.findOne({ slug: tempSlug });
+        if (existingStory) {
+             return res.status(400).json({ message: 'Judul cerita ini sudah ada atau menghasilkan slug yang sama. Silakan gunakan judul lain yang unik.' });
+        }
+
+        const newStory = new Story({
             title,
             genre,
-            content,
-            author,
-            imageUrl: finalImageUrl,
-            profileUrl: finalProfileUrl,
-            createdAt: new Date().toISOString()
-        };
+            authorName,
+            coverImageUrl: finalCoverImageUrl,
+            authorProfileUrl: finalAuthorProfileUrl,
+            chapters: [{
+                title: (firstChapterTitle && firstChapterTitle.trim() !== '') ? firstChapterTitle.trim() : 'Bab 1',
+                content: firstChapterContent, 
+                order: 1
+            }],
+            tags: tags ? tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '') : [],
+            status: status || 'Ongoing'
+        });
         
-        // Add to stories data
-        const stories = readStoriesData();
-        stories.push(newStory);
-        writeStoriesData(stories);
-        
+        await newStory.save();
         res.status(201).json(newStory);
     } catch (error) {
-        console.error('Error uploading story:', error);
-        res.status(500).json({ message: 'Failed to upload story' });
+        console.error("Error creating story:", error);
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(val => val.message);
+            return res.status(400).json({ message: `Kesalahan validasi: ${messages.join('. ')}` });
+        }
+        if (error.code === 11000) { 
+             return res.status(400).json({ message: 'Judul cerita menghasilkan slug yang sudah ada (error kode 11000). Coba judul yang sedikit berbeda.' });
+        }
+        res.status(500).json({ message: 'Gagal membuat cerita. Silakan coba lagi.', error: error.message });
     }
 });
 
-// Get comments for a story
-app.get('/api/comments/:storyId', (req, res) => {
+app.get('/api/stories', async (req, res) => {
     try {
-        const comments = readCommentsData();
-        const storyComments = comments.filter(c => c.storyId === req.params.storyId);
-        res.json(storyComments);
+        const stories = await Story.find().sort({ createdAt: -1 }).select('-chapters.content');
+        res.json(stories);
     } catch (error) {
-        console.error('Error getting comments:', error);
-        res.status(500).json({ message: 'Failed to retrieve comments' });
+        res.status(500).json({ message: 'Gagal mengambil cerita', error: error.message });
     }
 });
 
-// Add a comment with profile image
-app.post('/api/comments', upload.single('profileImage'), (req, res) => {
+app.get('/api/stories/:slug', async (req, res) => {
     try {
-        const { storyId, name, text } = req.body;
-        
-        // Validate required fields
-        if (!storyId || !name || !text) {
-            return res.status(400).json({ message: 'All fields are required' });
+        const story = await Story.findOneAndUpdate(
+            { slug: req.params.slug },
+            { $inc: { views: 1 } },
+            { new: true }
+        );
+
+        if (story) {
+            res.json(story);
+        } else {
+            res.status(404).json({ message: 'Cerita tidak ditemukan.' });
         }
-        
-        // Process profile image if uploaded
-        let profileUrl = '/uploads/default-comment-profile.jpg';
-        
-        if (req.file) {
-            profileUrl = `/uploads/${req.file.filename}`;
+    } catch (error) {
+        res.status(500).json({ message: 'Gagal mengambil cerita', error: error.message });
+    }
+});
+
+app.post('/api/stories/:slug/like', async (req, res) => {
+    try {
+        const story = await Story.findOneAndUpdate(
+            { slug: req.params.slug },
+            { $inc: { likes: 1 } },
+            { new: true }
+        );
+        if (story) {
+            res.json({ slug: story.slug, likes: story.likes, id: story._id });
+        } else {
+            res.status(404).json({ message: 'Cerita tidak ditemukan.' });
         }
-        
-        // Create comment object
-        const newComment = {
-            id: uuidv4(),
-            storyId,
-            name,
-            text,
-            profileUrl,
-            createdAt: new Date().toISOString()
+    } catch (error) {
+        res.status(500).json({ message: 'Gagal menyukai cerita', error: error.message });
+    }
+});
+
+app.post('/api/stories/:slug/chapters', async (req, res) => {
+    try {
+        const { title, content } = req.body;
+        if (!title || !title.trim() || !content || !content.trim()) {
+            return res.status(400).json({ message: "Judul bab dan isi bab harus diisi dan tidak boleh kosong." });
+        }
+
+        const story = await Story.findOne({ slug: req.params.slug });
+        if (!story) {
+            return res.status(404).json({ message: "Cerita tidak ditemukan." });
+        }
+
+        const newChapter = {
+            title: title.trim(),
+            content: content.trim(),
+            order: story.chapters.length + 1
         };
+        story.chapters.push(newChapter);
+        await story.save();
+        res.status(201).json(story.chapters[story.chapters.length -1]);
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(val => val.message);
+            return res.status(400).json({ message: `Kesalahan validasi bab: ${messages.join('. ')}` });
+        }
+        res.status(500).json({ message: 'Gagal menambah bab', error: error.message });
+    }
+});
+
+
+app.post('/api/comments', upload.single('commenterProfileFile'), async (req, res) => {
+    try {
+        const { storySlug, commenterName, text } = req.body;
+        if (!storySlug || !commenterName || !commenterName.trim() || !text || !text.trim()) {
+            return res.status(400).json({ message: 'Slug Cerita, nama, dan teks komentar harus diisi dan tidak boleh kosong.' });
+        }
+
+        const story = await Story.findOne({ slug: storySlug });
+        if (!story) {
+            return res.status(404).json({ message: 'Cerita tidak ditemukan untuk dikomentari.' });
+        }
+
+        let commenterProfileUrl = '/uploads/default-comment-profile.jpg';
+        if (req.file) {
+            commenterProfileUrl = `/uploads/${req.file.filename}`;
+        }
         
-        // Add to comments data
-        const comments = readCommentsData();
-        comments.push(newComment);
-        writeCommentsData(comments);
-        
+        const newComment = new Comment({
+            storyId: story._id,
+            commenterName: commenterName.trim(),
+            text: text.trim(),
+            commenterProfileUrl,
+        });
+        await newComment.save();
         res.status(201).json(newComment);
     } catch (error) {
-        console.error('Error adding comment:', error);
-        res.status(500).json({ message: 'Failed to add comment' });
+         if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(val => val.message);
+            return res.status(400).json({ message: `Kesalahan validasi komentar: ${messages.join('. ')}` });
+        }
+        res.status(500).json({ message: 'Gagal mengirim komentar', error: error.message });
     }
 });
 
-// Copy HTML files to public directory
-function copyHtmlFiles() {
-    const files = ['index.html', 'story.html'];
-    
-    files.forEach(file => {
-        const sourcePath = path.join(__dirname, file);
-        const destPath = path.join(__dirname, 'public', file);
-        
-        if (fs.existsSync(sourcePath)) {
-            fs.copyFileSync(sourcePath, destPath);
-            console.log(`Copied ${file} to public directory`);
-        } else {
-            console.warn(`${file} not found in root directory`);
+app.get('/api/comments/:storySlug', async (req, res) => {
+    try {
+        const story = await Story.findOne({ slug: req.params.storySlug });
+        if (!story) {
+            return res.status(404).json({ message: 'Cerita tidak ditemukan.' });
         }
-    });
-}
+        const comments = await Comment.find({ storyId: story._id }).sort({ createdAt: -1 });
+        res.json(comments);
+    } catch (error) {
+        res.status(500).json({ message: 'Gagal mengambil komentar', error: error.message });
+    }
+});
 
-// Start the server
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-    copyHtmlFiles();
-    console.log(`Access the website at http://localhost:${PORT}`);
+app.listen(port, () => {
+    console.log(`Server berjalan di http://localhost:${port}`);
 });
