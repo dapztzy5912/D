@@ -147,6 +147,52 @@
             min-height: 100px;
             margin-bottom: 15px;
         }
+
+        .comment-form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .comment-input-group {
+            flex: 1;
+        }
+        
+        .comment-input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .profile-upload-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .profile-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #eee;
+            border: 1px solid #ddd;
+        }
+        
+        .profile-upload-btn {
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            color: #555;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .profile-upload-btn:hover {
+            background-color: #e0e0e0;
+        }
         
         .button {
             background-color: #7c4dff;
@@ -237,6 +283,22 @@
                 padding: 20px;
                 font-size: 1rem;
             }
+
+            .comment-form-row {
+                flex-direction: column;
+            }
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .file-input {
+            display: none;
         }
     </style>
 </head>
@@ -258,13 +320,24 @@
         
         <div class="comments-section">
             <h2 class="comments-header">Komentar</h2>
-            <div class="comment-form">
+            <form id="commentForm" class="comment-form">
                 <textarea id="commentText" placeholder="Tulis komentar kamu..."></textarea>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <input type="text" id="commentName" placeholder="Nama kamu" style="padding: 10px; border: 1px solid #ddd; border-radius: 20px; flex: 1; margin-right: 15px;">
-                    <button id="submitComment" class="button">Kirim Komentar</button>
+                <div class="comment-form-row">
+                    <div class="comment-input-group">
+                        <label for="commentName">Nama</label>
+                        <input type="text" id="commentName" placeholder="Nama kamu">
+                    </div>
+                    <div class="comment-input-group">
+                        <label>Foto Profil (Opsional)</label>
+                        <div class="profile-upload-container">
+                            <img id="profilePreview" class="profile-preview" src="/uploads/default-comment-profile.jpg" alt="Profile Preview">
+                            <label for="profileFile" class="profile-upload-btn">Pilih Foto</label>
+                            <input type="file" id="profileFile" class="file-input" accept="image/*">
+                        </div>
+                    </div>
                 </div>
-            </div>
+                <button type="submit" id="submitComment" class="button">Kirim Komentar</button>
+            </form>
             
             <div class="comment-list" id="commentList">
                 <!-- Comments will be loaded here -->
@@ -294,12 +367,28 @@
             // Load comments
             loadComments(storyId);
             
+            // Profile image preview
+            const profileInput = document.getElementById('profileFile');
+            const profilePreview = document.getElementById('profilePreview');
+            
+            profileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        profilePreview.src = e.target.result;
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+            
             // Comment form submission
-            const submitComment = document.getElementById('submitComment');
+            const commentForm = document.getElementById('commentForm');
             const commentText = document.getElementById('commentText');
             const commentName = document.getElementById('commentName');
             
-            submitComment.addEventListener('click', async function() {
+            commentForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                
                 if (!commentText.value.trim()) {
                     alert('Silakan tulis komentar terlebih dahulu.');
                     return;
@@ -310,24 +399,28 @@
                     return;
                 }
                 
-                const commentData = {
-                    storyId: storyId,
-                    name: commentName.value.trim(),
-                    text: commentText.value.trim()
-                };
+                // Create form data for file upload
+                const formData = new FormData();
+                formData.append('storyId', storyId);
+                formData.append('name', commentName.value.trim());
+                formData.append('text', commentText.value.trim());
+                
+                // Add profile photo if selected
+                if (profileInput.files && profileInput.files[0]) {
+                    formData.append('profileImage', profileInput.files[0]);
+                }
                 
                 try {
                     const response = await fetch('/api/comments', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(commentData)
+                        body: formData
                     });
                     
                     if (response.ok) {
                         commentText.value = '';
                         commentName.value = '';
+                        profilePreview.src = '/uploads/default-comment-profile.jpg';
+                        profileInput.value = '';
                         loadComments(storyId); // Reload comments
                     } else {
                         const error = await response.json();
@@ -430,8 +523,8 @@
             const commentElement = document.createElement('div');
             commentElement.className = 'comment';
             
-            // Use default profile image if none provided
-            const profileUrl = '/uploads/default-comment-profile.jpg';
+            // Use profile URL if provided, otherwise use default
+            const profileUrl = comment.profileUrl || '/uploads/default-comment-profile.jpg';
             
             commentElement.innerHTML = `
                 <div class="comment-header">
