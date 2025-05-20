@@ -262,8 +262,8 @@ app.get('/api/comments/:storyId', (req, res) => {
     }
 });
 
-// Add a comment
-app.post('/api/comments', (req, res) => {
+// Add a comment with profile image
+app.post('/api/comments', upload.single('profileImage'), (req, res) => {
     try {
         const { storyId, name, text } = req.body;
         
@@ -272,12 +272,20 @@ app.post('/api/comments', (req, res) => {
             return res.status(400).json({ message: 'All fields are required' });
         }
         
+        // Process profile image if uploaded
+        let profileUrl = '/uploads/default-comment-profile.jpg';
+        
+        if (req.file) {
+            profileUrl = `/uploads/${req.file.filename}`;
+        }
+        
         // Create comment object
         const newComment = {
             id: uuidv4(),
             storyId,
             name,
             text,
+            profileUrl,
             createdAt: new Date().toISOString()
         };
         
